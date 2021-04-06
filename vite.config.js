@@ -105,6 +105,9 @@ export default () => {
                     }
                 }
             }
+        },
+        optimizeDeps: {
+            exclude: ['./node_modules/@kangc/v-md-editor/lib/style/base-editor.css']
         }
     }
     return config

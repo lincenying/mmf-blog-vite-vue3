@@ -15,7 +15,13 @@
             </a-input>
             <div class="settings-section">
                 <div id="post-content" class="settings-item-content">
-                    <textarea name="content" id="content" cols="30" rows="10"></textarea>
+                    <v-md-editor
+                        v-model="form.content"
+                        @upload-image="handleUploadImage"
+                        :disabled-menus="[]"
+                        mode="edit"
+                        height="500px"
+                    ></v-md-editor>
                 </div>
             </div>
         </div>
@@ -31,6 +37,7 @@ import { useHead } from '@vueuse/head'
 import { useToggle } from '@vueuse/core'
 
 import { showMsg } from '@/utils'
+import { uploadApi } from '@/api/upload-api'
 
 import aInput from '../components/_input.vue'
 
@@ -95,6 +102,20 @@ export default {
             }
         }
 
+        const handleUploadImage = async (event, insertImage, files) => {
+            const formdata = new FormData()
+            formdata.append('file', files)
+            const { data } = await store.$api.file(uploadApi + '/ajax.php?action=upload', formdata)
+            if (data && data.filepath) {
+                insertImage({
+                    url: uploadApi + '/' + data.filepath,
+                    desc: ''
+                    // width: 'auto',
+                    // height: 'auto',
+                })
+            }
+        }
+
         const headTitle = computed(() => {
             return '发布文章 - M.M.F 小屋'
         })
@@ -112,7 +133,8 @@ export default {
         return {
             form,
             category,
-            handleInsert
+            handleInsert,
+            handleUploadImage
         }
     }
 }

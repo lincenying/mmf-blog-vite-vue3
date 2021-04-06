@@ -14,7 +14,15 @@
                 <span class="input-info error">请输入分类</span>
             </a-input>
             <div class="settings-section">
-                <div id="modify-content" class="settings-item-content"></div>
+                <div id="modify-content" class="settings-item-content">
+                    <v-md-editor
+                        v-model="form.content"
+                        @upload-image="handleUploadImage"
+                        :disabled-menus="[]"
+                        mode="edit"
+                        height="500px"
+                    ></v-md-editor>
+                </div>
             </div>
         </div>
         <div class="settings-footer">
@@ -32,6 +40,7 @@ import { useHead } from '@vueuse/head'
 import { useToggle } from '@vueuse/core'
 
 import { showMsg } from '@/utils'
+import { uploadApi } from '@/api/upload-api'
 
 import aInput from '../components/_input.vue'
 
@@ -112,6 +121,20 @@ export default {
             }
         }
 
+        const handleUploadImage = async (event, insertImage, files) => {
+            const formdata = new FormData()
+            formdata.append('file', files)
+            const { data } = await store.$api.file(uploadApi + '/ajax.php?action=upload', formdata)
+            if (data && data.filepath) {
+                insertImage({
+                    url: uploadApi + '/' + data.filepath,
+                    desc: ''
+                    // width: 'auto',
+                    // height: 'auto',
+                })
+            }
+        }
+
         const headTitle = computed(() => {
             return '编辑文章 - M.M.F 小屋'
         })
@@ -129,7 +152,8 @@ export default {
         return {
             form,
             category,
-            handleModify
+            handleModify,
+            handleUploadImage
         }
     }
 }

@@ -12,13 +12,14 @@
     "lint:fix": "eslint './src/**/*.{js,ts,tsx,vue,md}' --fix"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.2.2",
     "@vueuse/core": "^4.7.0",
     "@vueuse/head": "^0.5.1",
+    "add": "^2.0.6",
     "axios": "^0.21.1",
     "express": "^4.17.1",
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.21",
-    "mavon-editor": "^2.9.1",
     "md5": "^2.3.0",
     "qs": "^6.10.1",
     "store2": "^2.12.0",
@@ -30,7 +31,8 @@
     "vue-router": "^4.0.5",
     "vuex": "4.0.0",
     "vuex-router-sync": "^5.0.0",
-    "windicss": "^2.5.10"
+    "windicss": "^2.5.10",
+    "yarn": "^1.22.10"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
