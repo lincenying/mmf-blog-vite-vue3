@@ -10,11 +10,11 @@
             <div v-for="item in admin.data" :key="item._id" class="list-section">
                 <div class="list-username">{{ item.username }}</div>
                 <div class="list-email">{{ item.email }}</div>
-                <div class="list-date">{{ item.update_date | timeYmd }}</div>
+                <div class="list-date">{{ $filters.timeYmd(item.update_date) }}</div>
                 <div class="list-action">
                     <router-link :to="'/backend/admin/modify/' + item._id" class="badge badge-success">编辑</router-link>
-                    <a v-if="item.is_delete" @click="recover(item._id)" href="javascript:;">恢复</a>
-                    <a v-else @click="deletes(item._id)" href="javascript:;">删除</a>
+                    <a v-if="item.is_delete" @click="handleRecover(item._id)" href="javascript:;">恢复</a>
+                    <a v-else @click="handleDelete(item._id)" href="javascript:;">删除</a>
                 </div>
             </div>
         </div>
@@ -26,62 +26,90 @@
 </template>
 
 <script>
-// import api from '~api'
-import { mapGetters } from 'vuex'
-import checkAdmin from '@/mixins/check-admin'
+import { computed, getCurrentInstance, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
 
 export default {
     name: 'backend-admin-list',
-    mixins: [checkAdmin],
     async asyncData({ store, route }, config = { page: 1 }) {
         await store.dispatch('backend/admin/getAdminList', {
             ...config,
             path: route.path
         })
     },
-    data() {
-        return {
-            loading: false
-        }
-    },
-    computed: {
-        ...mapGetters({
-            admin: 'backend/admin/getAdminList'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const admin = computed(() => {
+            return store.getters['backend/admin/getAdminList']
         })
-    },
-    mounted() {},
-    methods: {
-        async loadMore(page = this.admin.page + 1) {
-            this.loading = true
-            await this.$options.asyncData({ store: this.$store }, { page })
-            this.loading = false
-        },
-        async recover(id) {
-            const { code, message } = await this.$store.$api.get('backend/admin/recover', { id })
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const loadMore = async (page = admin.value.page + 1) => {
+            if (loading.value) return
+            toggleLoading(true)
+            await $type.asyncData({ store, route }, { page })
+            toggleLoading(false)
+        }
+        const handleRecover = async id => {
+            const { code, message } = await store.$api.get('backend/admin/recover', { id })
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('backend/admin/recoverAdmin', id)
-            }
-        },
-        async deletes(id) {
-            const { code, message } = await this.$store.$api.get('backend/admin/delete', { id })
-            if (code === 200) {
-                showMsg({
-                    type: 'success',
-                    content: message
-                })
-                this.$store.commit('backend/admin/deleteAdmin', id)
+                store.commit('backend/admin/recoverAdmin', id)
             }
         }
-    },
-    metaInfo() {
+        const handleDelete = async id => {
+            const { code, message } = await store.$api.get('backend/admin/delete', { id })
+            if (code === 200) {
+                showMsg({
+                    type: 'success',
+                    content: message
+                })
+                store.commit('backend/admin/deleteAdmin', id)
+            }
+        }
+
+        onMounted(() => {
+            loadMore(1)
+        })
+
+        const headTitle = computed(() => {
+            return '管理员列表 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '管理员列表 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            admin,
+            loading,
+            loadMore,
+            handleRecover,
+            handleDelete
         }
     }
 }

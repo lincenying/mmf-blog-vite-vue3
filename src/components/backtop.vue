@@ -3,28 +3,21 @@
 </template>
 
 <script>
+import { onBeforeMount, onMounted, ref } from 'vue'
+
 export default {
     name: 'back-top',
-    data() {
-        return {
-            scrollTop: 0
-        }
-    },
-    mounted() {
-        window.addEventListener('scroll', this.scrolling)
-    },
-    beforeUnmount() {
-        window.removeEventListener('scroll', this.scrolling)
-    },
-    methods: {
-        scrolling() {
+    setup() {
+        const scrollTop = ref(0)
+
+        const scrolling = () => {
             if (window.scrollTime) window.clearTimeout(window.scrollTime)
             window.scrollTime = window.setTimeout(() => {
-                this.scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
+                scrollTop.value = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop)
             }, 100)
-        },
-        handleBackTop() {
-            let top = this.scrollTop
+        }
+        const handleBackTop = () => {
+            let top = scrollTop.value
             const timer = setInterval(() => {
                 top -= Math.abs(top * 0.1)
                 if (top <= 1) {
@@ -34,6 +27,20 @@ export default {
                 window.scrollTo(0, top)
                 // document.body.scrollTop = top
             }, 20)
+        }
+
+        onMounted(() => {
+            window.addEventListener('scroll', scrolling)
+        })
+
+        onBeforeMount(() => {
+            window.removeEventListener('scroll', scrolling)
+        })
+
+        return {
+            scrollTop,
+            scrolling,
+            handleBackTop
         }
     }
 }

@@ -33,31 +33,44 @@
 </template>
 
 <script>
+import { computed, getCurrentInstance } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+
 export default {
     name: 'navigation',
     props: ['backend'],
-    data() {
-        return {}
-    },
-    computed: {
-        userEmail() {
-            return this.$oc(this.$store.state, 'global.cookies.useremail')
-        },
-        isLogin() {
-            return !!this.$oc(this.$store.state, 'global.cookies.user')
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        const router = useRouter()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const userEmail = computed(() => {
+            return $ctx.$oc(store.state, 'global.cookies.useremail')
+        })
+        const isLogin = computed(() => {
+            return $ctx.$oc(store.state, 'global.cookies.user')
+        })
+
+        const login = () => {
+            store.commit('global/showLoginModal', true)
         }
-    },
-    methods: {
-        login() {
-            this.$store.commit('global/showLoginModal', true)
-        },
-        search(e) {
+        const search = e => {
             var qs = e.target.value
             if (qs === '') {
                 return false
             }
-            this.$router.replace('/search/' + qs)
+            router.replace('/search/' + qs)
         }
+
+        return { userEmail, isLogin, login, search }
     }
 }
 </script>

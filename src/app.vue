@@ -42,14 +42,16 @@
             </div>
             <backend-menu v-if="!isLogin"></backend-menu>
         </div>
+        <reload-prompt></reload-prompt>
     </div>
 </template>
 
 <script>
-import { computed, ref, getCurrentInstance } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+import reloadPrompt from './components/reload-prompt.vue'
 import Navigation from './components/navigation.vue'
 import signUp from './components/signup.vue'
 import signIn from './components/signin.vue'
@@ -59,6 +61,7 @@ import backendMenu from './components/backend-menu.vue'
 export default {
     name: 'app',
     components: {
+        reloadPrompt,
         Navigation,
         signUp,
         signIn,
@@ -66,8 +69,8 @@ export default {
         backendMenu
     },
     setup() {
-        const { ctx } = getCurrentInstance()
         const route = useRoute()
+        const router = useRouter()
         const store = useStore()
 
         const cacheFronentComponents = ref('frontend-index,frontend-about')
@@ -95,7 +98,7 @@ export default {
             store.dispatch('appShell/setPageSwitching', false)
         }
         const handleClickHeaderBack = () => {
-            ctx.$router.go(-1)
+            router.go(-1)
         }
 
         return {

@@ -15,12 +15,12 @@
                     </a>
                     <div class="comment-content-wrap">
                         <span class="comment-author-wrap">
-                            <a href="javascript:;" class="comment-author">{{ item.username }}</a>
+                            <a href="javascript:;" class="comment-author">{{ item.userid.username }}</a>
                         </span>
                         <div class="comment-content" v-text="item.content"></div>
                         <div class="comment-footer">
                             <span class="comment-time" v-text="item.creat_date"></span>
-                            <a @click="reply(item)" href="javascript:;" class="comment-action-item comment-reply">回复</a>
+                            <a @click="handleReply(item)" href="javascript:;" class="comment-action-item comment-reply">回复</a>
                         </div>
                     </div>
                 </div>
@@ -34,60 +34,81 @@
 </template>
 
 <script>
+import { computed, getCurrentInstance, reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-// import api from '~api'
 
 export default {
     name: 'frontend-comment',
     props: ['comments'],
-    data() {
-        return {
-            loading: false,
-            form: {
-                id: this.$route.params.id,
-                content: ''
-            }
-        }
-    },
-    computed: {
-        user() {
-            return this.$oc(this.$store.state, 'global.cookies.user')
-        },
-        userEmail() {
-            return this.$oc(this.$store.state, 'global.cookies.useremail')
-        }
-    },
-    methods: {
-        async loadcomment() {
-            this.loading = true
-            await this.$store.dispatch(`global/comment/getCommentList`, {
-                id: this.$route.params.id,
-                page: this.comments.page + 1,
+    setup(props) {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const form = reactive({
+            id: route.params.id,
+            content: ''
+        })
+
+        const user = computed(() => {
+            return $ctx.$oc(store.state, 'global.cookies.user')
+        })
+        const userEmail = computed(() => {
+            return $ctx.$oc(store.state, 'global.cookies.useremail')
+        })
+
+        const loadcomment = async () => {
+            toggleLoading(true)
+            await store.dispatch(`global/comment/getCommentList`, {
+                id: route.params.id,
+                page: props.comments.page + 1,
                 limit: 10
             })
-            this.loading = false
-        },
-        async postComment() {
-            if (!this.user) {
+            toggleLoading(false)
+        }
+        const postComment = async () => {
+            if (!user.value) {
                 showMsg('请先登录!')
-                this.$store.commit('global/showLoginModal', true)
-            } else if (this.form.content === '') {
+                store.commit('global/showLoginModal', true)
+            } else if (form.content === '') {
                 showMsg('请输入评论内容!')
             } else {
-                const { code, data } = await this.$store.$api.post('frontend/comment/insert', this.form)
+                const { code, data } = await store.$api.post('frontend/comment/insert', form)
                 if (code === 200) {
-                    this.form.content = ''
+                    form.content = ''
                     showMsg({
                         content: '评论发布成功!',
                         type: 'success'
                     })
-                    this.$store.commit('global/comment/insertCommentItem', data)
+                    store.commit('global/comment/insertCommentItem', data)
                 }
             }
-        },
-        reply(item) {
-            this.form.content = '回复 @' + item.username + ': '
+        }
+        const handleReply = item => {
+            console.log(item)
+            form.content = '回复 @' + item.userid.username + ': '
             document.querySelector('#content').focus()
+        }
+
+        return {
+            form,
+            loading,
+            userEmail,
+            loadcomment,
+            postComment,
+            handleReply
         }
     }
 }

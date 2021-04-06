@@ -28,14 +28,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { computed, getCurrentInstance, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-// import api from '~api'
-import checkAdmin from '@/mixins/check-admin'
 
 export default {
     name: 'backend-article-comment',
-    mixins: [checkAdmin],
     async asyncData({ store, route }, config = { page: 1 }) {
         config.all = 1
         config.id = route.params.id
@@ -44,48 +46,74 @@ export default {
             path: route.path
         })
     },
-    data() {
-        return {
-            loading: false
-        }
-    },
-    computed: {
-        ...mapGetters({
-            comments: 'global/comment/getCommentList'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const comments = computed(() => {
+            return store.getters['global/comment/getCommentList']
         })
-    },
-    mounted() {},
-    methods: {
-        async loadMore(page = this.comments.page + 1) {
-            this.loading = true
-            await this.$options.asyncData({ store: this.$store, route: this.$route }, { page })
-            this.loading = false
-        },
-        async recover(id) {
-            const { code, message } = await this.$store.$api.get('frontend/comment/recover', { id })
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const loadMore = async (page = comments.value.page + 1) => {
+            if (loading.value) return
+            toggleLoading(true)
+            await $type.asyncData({ store, route }, { page })
+            toggleLoading(false)
+        }
+        const handleRecover = async id => {
+            const { code, message } = await store.$api.get('frontend/comment/recover', { id })
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('global/comment/recoverComment', id)
-            }
-        },
-        async deletes(id) {
-            const { code, message } = await this.$store.$api.get('frontend/comment/delete', { id })
-            if (code === 200) {
-                showMsg({
-                    type: 'success',
-                    content: message
-                })
-                this.$store.commit('global/comment/deleteComment', id)
+                store.commit('frontend/comment/recoverComment', id)
             }
         }
-    },
-    metaInfo() {
+        const handleDelete = async id => {
+            const { code, message } = await store.$api.get('frontend/comment/delete', { id })
+            if (code === 200) {
+                showMsg({
+                    type: 'success',
+                    content: message
+                })
+                store.commit('frontend/comment/deleteComment', id)
+            }
+        }
+
+        onMounted(() => {
+            loadMore(1)
+        })
+
+        const headTitle = computed(() => {
+            return '评论列表 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '评论列表 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            comments,
+            loading,
+            loadMore,
+            handleRecover,
+            handleDelete
         }
     }
 }

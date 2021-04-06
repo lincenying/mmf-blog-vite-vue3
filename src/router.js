@@ -15,21 +15,21 @@ const about = () => import('./pages/frontend-about.vue')
 const account = () => import('./pages/frontend-user-account.vue')
 const password = () => import('./pages/frontend-user-password.vue')
 
-// const login = () => import('./pages/backend-login.vue')
-// const articleList = () => import('./pages/backend-article-list.vue')
-// const articleInsert = () => import('./pages/backend-article-insert.vue')
-// const articleModify = () => import('./pages/backend-article-modify.vue')
-// const articleComment = () => import('./pages/backend-article-comment.vue')
+const login = () => import('./pages/backend-login.vue')
+const articleList = () => import('./pages/backend-article-list.vue')
+const articleInsert = () => import('./pages/backend-article-insert.vue')
+const articleModify = () => import('./pages/backend-article-modify.vue')
+const articleComment = () => import('./pages/backend-article-comment.vue')
 
-// const categoryList = () => import('./pages/backend-category-list.vue')
-// const categoryInsert = () => import('./pages/backend-category-insert.vue')
-// const categoryModify = () => import('./pages/backend-category-modify.vue')
+const categoryList = () => import('./pages/backend-category-list.vue')
+const categoryInsert = () => import('./pages/backend-category-insert.vue')
+const categoryModify = () => import('./pages/backend-category-modify.vue')
 
-// const adminList = () => import('./pages/backend-admin-list.vue')
-// const adminModify = () => import('./pages/backend-admin-modify.vue')
+const adminList = () => import('./pages/backend-admin-list.vue')
+const adminModify = () => import('./pages/backend-admin-modify.vue')
 
-// const userList = () => import('./pages/backend-user-list.vue')
-// const userModify = () => import('./pages/backend-user-modify.vue')
+const userList = () => import('./pages/backend-user-list.vue')
+const userModify = () => import('./pages/backend-user-modify.vue')
 
 const guardRoute = (to, from, next) => {
     var token = cookies.get('user')
@@ -72,90 +72,90 @@ const routes = [
     { name: 'article', path: '/article/:id', component: article, meta: { notKeepAlive: true, index: 2 } },
     { name: 'about', path: '/about', component: about, meta: { index: 1 } },
     { name: 'account', path: '/user/account', component: account, meta: { index: 2 }, beforeEnter: guardRoute },
-    { name: 'password', path: '/user/password', component: password, meta: { index: 2 }, beforeEnter: guardRoute }
+    { name: 'password', path: '/user/password', component: password, meta: { index: 2 }, beforeEnter: guardRoute },
 
-    // { name: 'login', path: '/backend', component: login },
+    { name: 'login', path: '/backend', component: login },
 
-    // {
-    //     name: 'admin_list',
-    //     path: '/backend/admin/list',
-    //     component: adminList,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'admin_modify',
-    //     path: '/backend/admin/modify/:id',
-    //     component: adminModify,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
+    {
+        name: 'admin_list',
+        path: '/backend/admin/list',
+        component: adminList,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'admin_modify',
+        path: '/backend/admin/modify/:id',
+        component: adminModify,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
 
-    // {
-    //     name: 'article_list',
-    //     path: '/backend/article/list',
-    //     component: articleList,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'article_insert',
-    //     path: '/backend/article/insert',
-    //     component: articleInsert,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'article_modify',
-    //     path: '/backend/article/modify/:id',
-    //     component: articleModify,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'article_comment',
-    //     path: '/backend/article/comment/:id',
-    //     component: articleComment,
-    //     meta: { notKeepAlive: true, index: 2 },
-    //     beforeEnter: guardRouteBackend
-    // },
+    {
+        name: 'article_list',
+        path: '/backend/article/list',
+        component: articleList,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'article_insert',
+        path: '/backend/article/insert',
+        component: articleInsert,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'article_modify',
+        path: '/backend/article/modify/:id',
+        component: articleModify,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'article_comment',
+        path: '/backend/article/comment/:id',
+        component: articleComment,
+        meta: { notKeepAlive: true, index: 2 },
+        beforeEnter: guardRouteBackend
+    },
 
-    // {
-    //     name: 'category_list',
-    //     path: '/backend/category/list',
-    //     component: categoryList,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'category_insert',
-    //     path: '/backend/category/insert',
-    //     component: categoryInsert,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'category_modify',
-    //     path: '/backend/category/modify/:id',
-    //     component: categoryModify,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
+    {
+        name: 'category_list',
+        path: '/backend/category/list',
+        component: categoryList,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'category_insert',
+        path: '/backend/category/insert',
+        component: categoryInsert,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'category_modify',
+        path: '/backend/category/modify/:id',
+        component: categoryModify,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
 
-    // {
-    //     name: 'user_list',
-    //     path: '/backend/user/list',
-    //     component: userList,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // },
-    // {
-    //     name: 'user_modify',
-    //     path: '/backend/user/modify/:id',
-    //     component: userModify,
-    //     meta: { index: 1 },
-    //     beforeEnter: guardRouteBackend
-    // }
+    {
+        name: 'user_list',
+        path: '/backend/user/list',
+        component: userList,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    },
+    {
+        name: 'user_modify',
+        path: '/backend/user/modify/:id',
+        component: userModify,
+        meta: { index: 1 },
+        beforeEnter: guardRouteBackend
+    }
 ]
 
 export function createRouter(store) {

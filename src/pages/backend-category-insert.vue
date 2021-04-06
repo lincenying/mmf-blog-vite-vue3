@@ -10,14 +10,19 @@
                 <span class="input-info error">请输入分类排序</span>
             </a-input>
         </div>
-        <div class="settings-footer"><a @click="insert" href="javascript:;" class="btn btn-yellow">添加分类</a></div>
+        <div class="settings-footer"><a @click="handleInsert" href="javascript:;" class="btn btn-yellow">添加分类</a></div>
     </div>
 </template>
 
 <script>
+import { computed, getCurrentInstance, onMounted, reactive, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-// import api from '~api'
-import checkAdmin from '@/mixins/check-admin'
+
 import aInput from '../components/_input.vue'
 
 export default {
@@ -25,39 +30,81 @@ export default {
     components: {
         aInput
     },
-    mixins: [checkAdmin],
-    data() {
-        return {
-            form: {
-                cate_name: '',
-                cate_order: ''
+
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        const router = useRouter()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const item = computed(() => {
+            return store.getters['global/category/getCategoryItem']
+        })
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const form = reactive({
+            cate_name: '',
+            cate_order: ''
+        })
+
+        watch(item, val => {
+            form.cate_name = val.data.cate_name
+            form.cate_order = val.data.cate_order
+        })
+
+        onMounted(() => {
+            if (item && item.data) {
+                form.cate_name = item.data.cate_name
+                form.cate_order = item.data.cate_order
             }
-        }
-    },
-    methods: {
-        async insert() {
-            if (!this.form.cate_name || !this.form.cate_order) {
+        })
+
+        const handleInsert = async () => {
+            if (!form.cate_name || !form.cate_order) {
                 showMsg('请将表单填写完整!')
                 return
             }
-            const { code, data, message } = await this.$store.$api.post('backend/category/insert', this.form)
+            if (loading.value) return
+            toggleLoading(true)
+            const { code, data, message } = await store.$api.post('backend/category/insert', form)
+            toggleLoading(false)
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('global/category/insertCategoryItem', {
-                    ...this.form,
+                store.commit('global/category/insertCategoryItem', {
+                    ...form,
                     _id: data
                 })
-                this.$router.push('/backend/category/list')
+                router.push('/backend/category/list')
             }
         }
-    },
-    metaInfo() {
+
+        const headTitle = computed(() => {
+            return '添加分类 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '添加分类 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            form,
+            handleInsert
         }
     }
 }

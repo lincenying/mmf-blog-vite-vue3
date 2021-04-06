@@ -54,8 +54,9 @@
     </div>
 </template>
 <script>
-import { onMounted, onBeforeUnmount, onActivated, computed, ref, getCurrentInstance } from 'vue'
+import { onMounted, computed, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { useHead } from '@vueuse/head'
 
 import trending from '../components/aside-trending.vue'
@@ -69,16 +70,27 @@ export default {
         await store.dispatch('frontend/article/getTrending')
     },
     setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
         const store = useStore()
 
         const trending = computed(() => {
             return store.getters['frontend/article/getTrending']
         })
 
+        onMounted(() => {
+            $type.asyncData({ route, store })
+        })
+
         const headTitle = computed(() => {
             return '关于 - M.M.F 小屋'
         })
-
         useHead({
             // Can be static or computed
             title: headTitle,

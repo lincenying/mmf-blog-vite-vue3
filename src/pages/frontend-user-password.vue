@@ -23,8 +23,9 @@
 </template>
 
 <script>
-import { onMounted, onBeforeUnmount, onActivated, computed, ref, getCurrentInstance, reactive } from 'vue'
+import { computed, getCurrentInstance, reactive } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { useHead } from '@vueuse/head'
 
 import { showMsg } from '@/utils'
@@ -39,8 +40,14 @@ export default {
         account
     },
     setup() {
-        const { ctx } = getCurrentInstance()
-        // const route = useRoute()
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
         const store = useStore()
 
         const form = reactive({

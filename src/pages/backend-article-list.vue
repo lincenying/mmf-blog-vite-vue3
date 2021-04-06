@@ -10,11 +10,11 @@
             <div v-for="item in topics.data" :key="item._id" class="list-section">
                 <div class="list-title">{{ item.title }}</div>
                 <div class="list-category">{{ item.category_name }}</div>
-                <div class="list-date">{{ item.update_date | timeAgo }}</div>
+                <div class="list-date">{{ $filters.timeAgo(item.update_date) }}</div>
                 <div class="list-action">
                     <router-link :to="'/backend/article/modify/' + item._id" class="badge badge-success">编辑</router-link>
-                    <a v-if="item.is_delete" @click="recover(item._id)" href="javascript:;">恢复</a>
-                    <a v-else @click="deletes(item._id)" href="javascript:;">删除</a>
+                    <a v-if="item.is_delete" @click="handleRecover(item._id)" href="javascript:;">恢复</a>
+                    <a v-else @click="handleDelete(item._id)" href="javascript:;">删除</a>
                     <router-link v-if="item.comment_count > 0" :to="'/backend/article/comment/' + item._id" class="badge badge-success"
                         >评论</router-link
                     >
@@ -29,62 +29,90 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { computed, getCurrentInstance, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-// import api from '~api'
-import checkAdmin from '@/mixins/check-admin'
 
 export default {
     name: 'backend-article-list',
-    mixins: [checkAdmin],
     async asyncData({ store, route }, config = { page: 1 }) {
         await store.dispatch('backend/article/getArticleList', {
             ...config,
             path: route.path
         })
     },
-    data() {
-        return {
-            loading: false
-        }
-    },
-    computed: {
-        ...mapGetters({
-            topics: 'backend/article/getArticleList'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const topics = computed(() => {
+            return store.getters['backend/article/getArticleList']
         })
-    },
-    mounted() {},
-    methods: {
-        async loadMore(page = this.topics.page + 1) {
-            this.loading = true
-            await this.$options.asyncData({ store: this.$store, route: this.$route }, { page })
-            this.loading = false
-        },
-        async recover(id) {
-            const { code, message } = await this.$store.$api.get('backend/article/recover', { id })
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const loadMore = async (page = topics.value.page + 1) => {
+            if (loading.value) return
+            toggleLoading(true)
+            await $type.asyncData({ store, route }, { page })
+            toggleLoading(false)
+        }
+        const handleRecover = async id => {
+            const { code, message } = await store.$api.get('backend/article/recover', { id })
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('backend/article/recoverArticle', id)
-            }
-        },
-        async deletes(id) {
-            const { code, message } = await this.$store.$api.get('backend/article/delete', { id })
-            if (code === 200) {
-                showMsg({
-                    type: 'success',
-                    content: message
-                })
-                this.$store.commit('backend/article/deleteArticle', id)
+                store.commit('backend/article/recoverArticle', id)
             }
         }
-    },
-    metaInfo() {
+        const handleDelete = async id => {
+            const { code, message } = await store.$api.get('backend/article/delete', { id })
+            if (code === 200) {
+                showMsg({
+                    type: 'success',
+                    content: message
+                })
+                store.commit('backend/article/deleteArticle', id)
+            }
+        }
+
+        onMounted(() => {
+            loadMore(1)
+        })
+
+        const headTitle = computed(() => {
+            return '文章列表 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '文章列表 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            topics,
+            loading,
+            loadMore,
+            handleRecover,
+            handleDelete
         }
     }
 }

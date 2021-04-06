@@ -1,16 +1,18 @@
 import cookies from 'js-cookie'
-import mavonEditor from 'mavon-editor'
 
 import { createApp } from './main'
 import api from './api/index-client'
 
-import '@/assets/scss/style.scss'
+import 'toastr/build/toastr.css'
+import './assets/css/hljs/googlecode.css'
+import './assets/css/github-markdown.css'
+import './assets/scss/style.scss'
 
 const { app, router, store } = createApp()
 
 // wait until router is ready before mounting to ensure hydration match
 router.isReady().then(() => {
-    app.use(mavonEditor).mount('#app')
+    app.mount('#app')
     console.log('client router ready')
 })
 

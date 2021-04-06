@@ -24,8 +24,9 @@
 </template>
 
 <script>
-import { onMounted, onBeforeUnmount, onActivated, computed, ref, getCurrentInstance } from 'vue'
+import { onMounted, computed, getCurrentInstance, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { useHead } from '@vueuse/head'
 
 import { showMsg } from '@/utils'
@@ -48,8 +49,15 @@ export default {
         }
     },
     setup() {
-        const { ctx } = getCurrentInstance()
-        // const route = useRoute()
+        const ins = getCurrentInstance()
+        console.log(ins)
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
         const store = useStore()
 
         const username = ref('')
@@ -75,11 +83,11 @@ export default {
             const { code, data } = await store.$api.post('frontend/user/account', {
                 email,
                 username,
-                id: ctx.$oc(store.state, 'global.cookies.userid')
+                id: $ctx.$oc(store.state, 'global.cookies.userid')
             })
             if (code === 200) {
                 this.$store.commit('global/setCookies', {
-                    ...ctx.$oc(store.state, 'global.cookies'),
+                    ...$ctx.$oc(store.state, 'global.cookies'),
                     useremail: email
                 })
                 showMsg({

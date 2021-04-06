@@ -14,24 +14,25 @@
                 <span class="input-info error">请输入分类</span>
             </a-input>
             <div class="settings-section">
-                <div id="modify-content" class="settings-item-content">
-                    <mavon-editor v-if="renderMD" ref="md" v-model="form.content" @imgAdd="imgAdd" :subfield="false" :externalLink="externalLink" />
-                </div>
+                <div id="modify-content" class="settings-item-content"></div>
             </div>
         </div>
         <div class="settings-footer">
-            <a @click="modify" href="javascript:;" class="btn btn-yellow">编辑文章</a>
+            <a @click="handleModify" href="javascript:;" class="btn btn-yellow">编辑文章</a>
             <router-link to="/backend/article/list" class="btn btn-blue">返回</router-link>
         </div>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { computed, getCurrentInstance, onMounted, reactive, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-import { uploadApi } from '@/api/upload-api'
-// import api from '~api'
-import checkAdmin from '@/mixins/check-admin'
+
 import aInput from '../components/_input.vue'
 
 export default {
@@ -39,7 +40,6 @@ export default {
     components: {
         aInput
     },
-    mixins: [checkAdmin],
     async asyncData({ store, route }, config = { limit: 99 }) {
         config.all = 1
         await store.dispatch('global/category/getCategoryList', {
@@ -47,73 +47,89 @@ export default {
             path: route.path
         })
     },
-    data() {
-        return {
-            renderMD: false,
-            form: {
-                id: this.$route.params.id,
-                title: '',
-                category: '',
-                category_name: '',
-                category_old: '',
-                content: '',
-                html: ''
-            },
-            externalLink: {
-                markdown_css: false
-            }
-        }
-    },
-    computed: {
-        ...mapGetters({
-            category: 'global/category/getCategoryList'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        const router = useRouter()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const category = computed(() => {
+            return store.getters['global/category/getCategoryList']
         })
-    },
-    watch: {
-        'form.category'(val) {
-            const obj = this.category.find(item => item._id === val)
-            this.form.category_name = obj.cate_name
-        }
-    },
-    async mounted() {
-        const data = await this.$store.dispatch('backend/article/getArticleItem', { id: this.$route.params.id })
-        this.form.title = data.title
-        this.form.category_old = data.category
-        this.form.category = data.category
-        this.form.content = data.content
-        this.renderMD = true
-    },
-    methods: {
-        async imgAdd(pos, $file) {
-            // 第一步.将图片上传到服务器.
-            const formdata = new FormData()
-            formdata.append('file', $file)
-            const { data } = await this.$store.$api.file(uploadApi + '/ajax.php?action=upload', formdata)
-            if (data && data.filepath) {
-                this.$refs.md.$img2Url(pos, uploadApi + '/' + data.filepath)
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const form = reactive({
+            id: route.params.id,
+            title: '',
+            category: '',
+            category_name: '',
+            category_old: '',
+            content: '',
+            html: ''
+        })
+
+        watch(
+            () => form.category,
+            val => {
+                const obj = category.value.find(item => item._id === val)
+                if (obj) form.category_name = obj.cate_name
             }
-        },
-        async modify() {
-            if (!this.form.title || !this.form.category || !this.form.content) {
+        )
+
+        onMounted(async () => {
+            await $type.asyncData({ route, store })
+            const data = await store.dispatch('backend/article/getArticleItem', { id: route.params.id })
+            form.title = data.title
+            form.category_old = data.category
+            form.category = data.category
+            form.content = data.content
+        })
+
+        const handleModify = async () => {
+            if (!form.title || !form.category || !form.content) {
                 showMsg('请将表单填写完整!')
                 return
             }
-            // this.form.html = this.$refs.md.d_render
-            const { code, data, message } = await this.$store.$api.post('backend/article/modify', this.form)
+            if (loading.value) return
+            toggleLoading(true)
+            // form.html = this.$refs.md.d_render
+            const { code, data, message } = await store.$api.post('backend/article/modify', form)
+            toggleLoading(false)
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('backend/article/updateArticleItem', data)
-                this.$router.push('/backend/article/list')
+                store.commit('backend/article/updateArticleItem', data)
+                router.push('/backend/article/list')
             }
         }
-    },
-    metaInfo() {
+
+        const headTitle = computed(() => {
+            return '编辑文章 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '编辑文章 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            form,
+            category,
+            handleModify
         }
     }
 }

@@ -11,17 +11,21 @@
             </a-input>
         </div>
         <div class="settings-footer">
-            <a @click="modify" href="javascript:;" class="btn btn-yellow">编辑分类</a>
+            <a @click="handleModify" href="javascript:;" class="btn btn-yellow">编辑分类</a>
             <router-link to="/backend/category/list" class="btn btn-blue">返回</router-link>
         </div>
     </div>
 </template>
 
 <script>
-// import api from '~api'
-import { mapGetters } from 'vuex'
+import { computed, getCurrentInstance, onMounted, reactive, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-import checkAdmin from '@/mixins/check-admin'
+
 import aInput from '../components/_input.vue'
 
 export default {
@@ -29,58 +33,86 @@ export default {
     components: {
         aInput
     },
-    mixins: [checkAdmin],
     async asyncData({ store, route }) {
         await store.dispatch('global/category/getCategoryItem', {
             path: route.path,
             id: route.params.id
         })
     },
-    data() {
-        return {
-            form: {
-                id: this.$route.params.id,
-                cate_name: '',
-                cate_order: ''
-            }
-        }
-    },
-    computed: {
-        ...mapGetters({
-            item: 'global/category/getCategoryItem'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        const router = useRouter()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const item = computed(() => {
+            return store.getters['global/category/getCategoryItem']
         })
-    },
-    watch: {
-        item(val) {
-            this.form.cate_name = val.data.cate_name
-            this.form.cate_order = val.data.cate_order
-        }
-    },
-    mounted() {
-        this.form.cate_name = this.item.data.cate_name
-        this.form.cate_order = this.item.data.cate_order
-    },
-    methods: {
-        async modify() {
-            if (!this.form.cate_name || !this.form.cate_order) {
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const form = reactive({
+            id: route.params.id,
+            cate_name: '',
+            cate_order: ''
+        })
+
+        watch(item, val => {
+            console.log(val)
+            form.cate_name = val.data.cate_name
+            form.cate_order = val.data.cate_order
+        })
+
+        onMounted(async () => {
+            await $type.asyncData({ route, store })
+            if (item && item.data) {
+                form.cate_name = item.data.cate_name
+                form.cate_order = item.data.cate_order
+            }
+        })
+
+        const handleModify = async () => {
+            if (!form.cate_name || !form.cate_order) {
                 showMsg('请将表单填写完整!')
                 return
             }
-            const { code, data, message } = await this.$store.$api.post('backend/category/modify', this.form)
-            if (code === 200 && data) {
+            if (loading.value) return
+            toggleLoading(true)
+            const { code, data, message } = await store.$api.post('backend/category/modify', form)
+            toggleLoading(false)
+            if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('global/category/updateCategoryItem', data)
-                this.$router.push('/backend/category/list')
+                store.commit('global/category/updateCategoryItem', data)
+                router.push('/backend/category/list')
             }
         }
-    },
-    metaInfo() {
+
+        const headTitle = computed(() => {
+            return '编辑分类 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '编辑分类 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            form,
+            handleModify
         }
     }
 }

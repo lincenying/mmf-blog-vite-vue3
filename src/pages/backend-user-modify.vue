@@ -15,17 +15,21 @@
             </a-input>
         </div>
         <div class="settings-footer">
-            <a @click="modify" href="javascript:;" class="btn btn-yellow">编辑用户</a>
+            <a @click="handleModify" href="javascript:;" class="btn btn-yellow">编辑用户</a>
             <router-link to="/backend/user/list" class="btn btn-blue">返回</router-link>
         </div>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { computed, getCurrentInstance, onMounted, reactive, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-// import api from '~api'
-import checkAdmin from '@/mixins/check-admin'
+
 import aInput from '@/components/_input.vue'
 
 export default {
@@ -33,59 +37,86 @@ export default {
     components: {
         aInput
     },
-    mixins: [checkAdmin],
     async asyncData({ store, route }) {
         await store.dispatch('backend/user/getUserItem', {
             id: route.params.id,
             path: route.path
         })
     },
-    data() {
-        return {
-            form: {
-                id: this.$route.params.id,
-                username: '',
-                email: '',
-                password: ''
-            }
-        }
-    },
-    computed: {
-        ...mapGetters({
-            item: 'backend/user/getUserItem'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        const router = useRouter()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const item = computed(() => {
+            return store.getters['backend/user/getUserItem']
         })
-    },
-    watch: {
-        item(val) {
-            this.form.username = val.data.username
-            this.form.email = val.data.email
-        }
-    },
-    mounted() {
-        this.form.username = this.item.data.username
-        this.form.email = this.item.data.email
-    },
-    methods: {
-        async modify() {
-            if (!this.form.username || !this.form.email) {
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const form = reactive({
+            id: route.params.id,
+            username: '',
+            email: '',
+            password: ''
+        })
+
+        watch(item, val => {
+            form.username = val.data.username
+            form.email = val.data.email
+        })
+
+        onMounted(async () => {
+            await $type.asyncData({ route, store })
+            if (item && item.data) {
+                form.username = item.data.username
+                form.email = item.data.email
+            }
+        })
+
+        const handleModify = async () => {
+            if (!form.username || !form.email) {
                 showMsg('请将表单填写完整!')
                 return
             }
-            const { code, data, message } = await this.$store.$api.post('backend/user/modify', this.form)
+            if (loading.value) return
+            toggleLoading(true)
+            const { code, data, message } = await store.$api.post('backend/user/modify', form)
+            toggleLoading(false)
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('backend/user/updateUserItem', data)
-                this.$router.push('/backend/user/list')
+                store.commit('backend/user/updateUserItem', data)
+                router.push('/backend/user/list')
             }
         }
-    },
-    metaInfo() {
+
+        const headTitle = computed(() => {
+            return '用户编辑 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '用户编辑 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            form,
+            handleModify
         }
     }
 }

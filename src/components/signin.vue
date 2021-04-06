@@ -23,34 +23,45 @@
 </template>
 
 <script>
+import { getCurrentInstance, reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+
 import { showMsg } from '@/utils'
 // import api from '~api'
 
 export default {
     name: 'sign-in',
     props: ['show'],
-    data() {
-        return {
-            form: {
-                username: '',
-                password: ''
-            }
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const form = reactive({
+            username: '',
+            password: ''
+        })
+
+        const close = () => {
+            store.commit('global/showLoginModal', false)
         }
-    },
-    methods: {
-        close() {
-            this.$store.commit('global/showLoginModal', false)
-        },
-        register() {
-            this.$store.commit('global/showLoginModal', false)
-            this.$store.commit('global/showRegisterModal', true)
-        },
-        async login() {
-            if (!this.form.username || !this.form.password) {
+        const register = () => {
+            store.commit('global/showLoginModal', false)
+            store.commit('global/showRegisterModal', true)
+        }
+        const login = async () => {
+            if (!form.username || !form.password) {
                 showMsg('请将表单填写完整!')
                 return
             }
-            const { code, message } = await this.$store.$api.post('frontend/user/login', this.form)
+            const { code, message } = await store.$api.post('frontend/user/login', form)
             if (code === 200) {
                 showMsg({
                     type: 'success',
@@ -59,6 +70,14 @@ export default {
                 window.location.reload()
             }
         }
-    }
+
+        return {
+            form,
+            close,
+            register,
+            login
+        }
+    },
+    methods: {}
 }
 </script>

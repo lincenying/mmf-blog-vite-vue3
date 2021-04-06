@@ -18,12 +18,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import checkAdmin from '@/mixins/check-admin'
+import { computed, getCurrentInstance, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
 
 export default {
     name: 'backend-category-list',
-    mixins: [checkAdmin],
     async asyncData({ store, route }, config = { limit: 99 }) {
         config.all = 1
         await store.dispatch('global/category/getCategoryList', {
@@ -31,16 +33,52 @@ export default {
             path: route.path
         })
     },
-    computed: {
-        ...mapGetters({
-            category: 'global/category/getCategoryList'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const category = computed(() => {
+            return store.getters['global/category/getCategoryList']
         })
-    },
-    mounted() {},
-    metaInfo() {
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const loadMore = async () => {
+            if (loading.value) return
+            toggleLoading(true)
+            await $type.asyncData({ store, route })
+            toggleLoading(false)
+        }
+
+        onMounted(() => {
+            loadMore()
+        })
+
+        const headTitle = computed(() => {
+            return '分类列表 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '分类列表 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            category,
+            loading,
+            loadMore
         }
     }
 }

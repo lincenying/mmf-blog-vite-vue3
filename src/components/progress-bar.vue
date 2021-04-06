@@ -11,78 +11,91 @@
 </template>
 
 <script>
+import { nextTick, reactive, getCurrentInstance } from 'vue'
+
 export default {
     name: 'progress-bar',
-    data() {
-        return {
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+
+        const data = reactive({
             percent: 0,
             show: false,
             canSuccess: true,
             duration: 3000,
             height: '2px',
             color: '#ffca2b',
-            failedColor: '#ff0000'
+            failedColor: '#ff0000',
+            _timer: null,
+            _cut: null
+        })
+
+        const finish = () => {
+            data.percent = 100
+            data.hide()
         }
-    },
-    methods: {
-        start() {
-            this.show = true
-            this.canSuccess = true
-            if (this._timer) {
-                clearInterval(this._timer)
-                this.percent = 0
+        const start = () => {
+            data.show = true
+            data.canSuccess = true
+            if (data._timer) {
+                clearInterval(data._timer)
+                data.percent = 0
             }
-            this._cut = 10000 / Math.floor(this.duration)
-            this._timer = setInterval(() => {
-                this.increase(this._cut * Math.random())
-                if (this.percent > 95) {
-                    this.finish()
+            data._cut = 10000 / Math.floor(data.duration)
+            data._timer = setInterval(() => {
+                data.increase(data._cut * Math.random())
+                if (data.percent > 95) {
+                    finish()
                 }
             }, 100)
-            return this
-        },
-        set(num) {
-            this.show = true
-            this.canSuccess = true
-            this.percent = Math.floor(num)
-            return this
-        },
-        get() {
-            return Math.floor(this.percent)
-        },
-        increase(num) {
-            this.percent += Math.floor(num)
-            return this
-        },
-        decrease(num) {
-            this.percent -= Math.floor(num)
-            return this
-        },
-        finish() {
-            this.percent = 100
-            this.hide()
-            return this
-        },
-        pause() {
-            clearInterval(this._timer)
-            return this
-        },
-        hide() {
-            clearInterval(this._timer)
-            this._timer = null
+        }
+        const set = num => {
+            data.show = true
+            data.canSuccess = true
+            data.percent = Math.floor(num)
+        }
+        const get = () => {
+            return Math.floor(data.percent)
+        }
+        const increase = num => {
+            data.percent += Math.floor(num)
+        }
+        const decrease = num => {
+            data.percent -= Math.floor(num)
+        }
+        const pause = () => {
+            clearInterval(data._timer)
+        }
+        const hide = () => {
+            clearInterval(data._timer)
+            data._timer = null
             setTimeout(() => {
-                this.show = false
-                this.$nextTick(() => {
+                data.show = false
+                nextTick(() => {
                     setTimeout(() => {
-                        this.percent = 0
+                        data.percent = 0
                     }, 200)
                 })
             }, 500)
-            return this
-        },
-        fail() {
-            this.canSuccess = false
-            return this
+        }
+        const fail = () => {
+            data.canSuccess = false
+        }
+
+        return {
+            finish,
+            start,
+            set,
+            get,
+            increase,
+            decrease,
+            pause,
+            hide,
+            fail
         }
     }
 }

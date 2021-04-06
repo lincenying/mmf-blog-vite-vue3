@@ -20,11 +20,6 @@ export default {
     components: {
         actions
     },
-    props: ['item'],
-    data() {
-        return {
-            showMore: false
-        }
-    }
+    props: ['item']
 }
 </script>

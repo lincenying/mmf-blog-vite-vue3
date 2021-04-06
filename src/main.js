@@ -14,12 +14,6 @@ import filters from '@/filters'
 
 import App from './app.vue'
 
-import 'mavon-editor/dist/css/index.css'
-import 'toastr/build/toastr.css'
-import './assets/css/hljs/googlecode.css'
-import './assets/css/github-markdown.css'
-import './assets/scss/style.scss'
-
 /* eslint-disable no-new */
 
 export function createApp() {

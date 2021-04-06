@@ -68,8 +68,14 @@ export default {
         ])
     },
     setup() {
-        const { ctx } = getCurrentInstance()
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
         const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
         const store = useStore()
 
         saveScroll()
@@ -88,8 +94,7 @@ export default {
         const loadMore = async (page = topics.value.page + 1) => {
             if (loading.value) return
             toggleLoading(true)
-            console.log(ctx)
-            await ctx.$options.asyncData({ store, route }, { page })
+            await $type.asyncData({ store, route }, { page })
             toggleLoading(false)
         }
         onActivated(() => {

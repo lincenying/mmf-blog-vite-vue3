@@ -16,43 +16,56 @@
     </div>
 </template>
 <script>
+import { computed, getCurrentInstance } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+
 import { showMsg } from '@/utils'
 // import api from '~api'
 
 export default {
     name: 'item-actions',
     props: ['item'],
-    computed: {
-        user() {
-            return this.$oc(this.$store.state, 'global.cookies.user')
-        }
-    },
-    methods: {
-        async like() {
-            if (!this.user) {
+    setup(props) {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const user = computed(() => {
+            return !!$ctx.$oc(store.state, 'global.cookies.user')
+        })
+
+        const like = async () => {
+            if (!user.value) {
                 showMsg('请先登录!')
-                this.$store.commit('global/showLoginModal', true)
+                store.commit('global/showLoginModal', true)
                 return
             }
             let url = 'frontend/like'
-            if (this.item.like_status) url = 'frontend/unlike'
-            const { code, message } = await this.$store.$api.get(url, { id: this.item._id })
+            if (props.item.like_status) url = 'frontend/unlike'
+            const { code, message } = await store.$api.get(url, { id: props.item._id })
             if (code === 200) {
                 showMsg({
                     content: message,
                     type: 'success'
                 })
-                this.$store.commit('frontend/article/modifyLikeStatus', {
-                    id: this.item._id,
-                    status: !this.item.like_status
+                store.commit('frontend/article/modifyLikeStatus', {
+                    id: props.item._id,
+                    status: !props.item.like_status
                 })
             }
-        },
-        share() {
+        }
+        const share = () => {
             const top = window.screen.height / 2 - 250
             const left = window.screen.width / 2 - 300
-            const title = this.item.title + ' - M.M.F 小屋'
-            const url = 'https://www.mmxiaowu.com/article/' + this.item._id
+            const title = props.item.title + ' - M.M.F 小屋'
+            const url = 'https://www.mmxiaowu.com/article/' + props.item._id
             window.open(
                 'http://service.weibo.com/share/share.php?title=' +
                     encodeURIComponent(title.replace(/&nbsp;/g, ' ').replace(/<br \/>/g, ' ')) +
@@ -65,6 +78,11 @@ export default {
                     left +
                     ', toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'
             )
+        }
+
+        return {
+            like,
+            share
         }
     }
 }

@@ -1,15 +1,12 @@
 module.exports = {
-    presets: ['@vue/cli-plugin-babel/preset'],
-    plugins: [
+    presets: [
         [
-            'import',
+            '@babel/preset-env',
             {
-                libraryName: 'vant',
-                libraryDirectory: 'es',
-                style: true
-            },
-            'vant'
-        ],
-        '@vue/babel-plugin-jsx'
-    ]
+                useBuiltIns: 'usage',
+                corejs: '3'
+            }
+        ]
+    ],
+    plugins: ['@babel/plugin-proposal-class-properties']
 }

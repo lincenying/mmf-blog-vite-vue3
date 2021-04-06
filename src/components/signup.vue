@@ -31,49 +31,59 @@
 </template>
 
 <script>
-// import api from '~api'
+import { getCurrentInstance, reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+
 import { strlen, showMsg } from '@/utils'
 
 export default {
     name: 'sign-up',
     props: ['show'],
-    data() {
-        return {
-            form: {
-                username: '',
-                email: '',
-                password: '',
-                re_password: ''
-            }
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const form = reactive({
+            username: '',
+            email: '',
+            password: '',
+            re_password: ''
+        })
+
+        const close = () => {
+            store.commit('global/showRegisterModal', false)
         }
-    },
-    methods: {
-        close() {
-            this.$store.commit('global/showRegisterModal', false)
-        },
-        login() {
-            this.$store.commit('global/showLoginModal', true)
-            this.$store.commit('global/showRegisterModal', false)
-        },
-        async register() {
+        const login = () => {
+            store.commit('global/showLoginModal', true)
+            store.commit('global/showRegisterModal', false)
+        }
+        const register = async () => {
             const reg = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)$/i
-            if (!this.form.username || !this.form.password || !this.form.email) {
+            if (!form.username || !form.password || !form.email) {
                 showMsg('请将表单填写完整!')
                 return
-            } else if (strlen(this.form.username) < 4) {
+            } else if (strlen(form.username) < 4) {
                 showMsg('用户长度至少 2 个中文或 4 个英文!')
                 return
-            } else if (!reg.test(this.form.email)) {
+            } else if (!reg.test(form.email)) {
                 showMsg('邮箱格式错误!')
                 return
-            } else if (strlen(this.form.password) < 8) {
+            } else if (strlen(form.password) < 8) {
                 showMsg('密码长度至少 8 位!')
                 return
-            } else if (this.form.password !== this.form.re_password) {
+            } else if (form.password !== form.re_password) {
                 showMsg('两次输入的密码不一致!')
                 return
             }
-            const { code, message } = await this.$store.$api.post('frontend/user/insert', this.form)
+            const { code, message } = await store.$api.post('frontend/user/insert', form)
             if (code === 200) {
                 showMsg({
                     type: 'success',
@@ -81,6 +91,13 @@ export default {
                 })
                 this.login()
             }
+        }
+
+        return {
+            form,
+            close,
+            login,
+            register
         }
     }
 }

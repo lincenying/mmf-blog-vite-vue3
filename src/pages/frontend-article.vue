@@ -66,6 +66,13 @@ export default {
         trending,
         other
     },
+    beforeRouteEnter(to, from, next) {
+        // 在渲染该组件的对应路由被验证前调用
+        // 不能获取组件实例 `this` ！
+        // 因为当守卫执行时，组件实例还没被创建！
+        console.log('beforeRouteEnter')
+        next()
+    },
     async asyncData({ store, route }) {
         const {
             path,
@@ -79,8 +86,14 @@ export default {
         ])
     },
     setup() {
-        const { ctx } = getCurrentInstance()
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
         const route = useRoute()
+        // eslint-disable-next-line no-unused-vars
         const store = useStore()
 
         saveScroll()
@@ -109,7 +122,7 @@ export default {
         })
 
         onMounted(() => {
-            ctx.$options.asyncData({ route, store })
+            $type.asyncData({ route, store })
         })
 
         useHead({

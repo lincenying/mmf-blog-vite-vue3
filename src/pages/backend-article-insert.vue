@@ -15,20 +15,23 @@
             </a-input>
             <div class="settings-section">
                 <div id="post-content" class="settings-item-content">
-                    <mavon-editor v-if="renderMD" ref="md" v-model="form.content" @imgAdd="imgAdd" :subfield="false" :externalLink="externalLink" />
+                    <textarea name="content" id="content" cols="30" rows="10"></textarea>
                 </div>
             </div>
         </div>
-        <div class="settings-footer"><a @click="insert" href="javascript:;" class="btn btn-yellow">添加文章</a></div>
+        <div class="settings-footer"><a @click="handleInsert" href="javascript:;" class="btn btn-yellow">添加文章</a></div>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { computed, getCurrentInstance, onMounted, reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { useHead } from '@vueuse/head'
+import { useToggle } from '@vueuse/core'
+
 import { showMsg } from '@/utils'
-import { uploadApi } from '@/api/upload-api'
-// import api from '~api'
-import checkAdmin from '@/mixins/check-admin'
+
 import aInput from '../components/_input.vue'
 
 export default {
@@ -36,7 +39,6 @@ export default {
     components: {
         aInput
     },
-    mixins: [checkAdmin],
     async asyncData({ store, route }, config = { limit: 99 }) {
         config.all = 1
         await store.dispatch('global/category/getCategoryList', {
@@ -44,59 +46,73 @@ export default {
             path: route.path
         })
     },
-    data() {
-        return {
-            renderMD: false,
-            form: {
-                title: '',
-                category: '',
-                content: '',
-                html: ''
-            },
-            externalLink: {
-                markdown_css: false
-            }
-        }
-    },
-    computed: {
-        ...mapGetters({
-            category: 'global/category/getCategoryList'
+    setup() {
+        const ins = getCurrentInstance()
+        // eslint-disable-next-line no-unused-vars
+        const $ctx = ins.appContext.config.globalProperties
+        // eslint-disable-next-line no-unused-vars
+        const $type = ins.type
+        // eslint-disable-next-line no-unused-vars
+        const route = useRoute()
+        const router = useRouter()
+        // eslint-disable-next-line no-unused-vars
+        const store = useStore()
+
+        const category = computed(() => {
+            return store.getters['global/category/getCategoryList']
         })
-    },
-    async mounted() {
-        this.renderMD = true
-    },
-    methods: {
-        async imgAdd(pos, $file) {
-            // 第一步.将图片上传到服务器.
-            const formdata = new FormData()
-            formdata.append('file', $file)
-            const { data } = await this.$store.$api.file(uploadApi + '/ajax.php?action=upload', formdata)
-            if (data && data.filepath) {
-                this.$refs.md.$img2Url(pos, uploadApi + '/' + data.filepath)
-            }
-        },
-        async insert() {
-            if (!this.form.title || !this.form.category || !this.form.content) {
+
+        const [loading, toggleLoading] = useToggle(false)
+
+        const form = reactive({
+            title: '',
+            category: '',
+            content: '',
+            html: ''
+        })
+
+        onMounted(async () => {
+            await $type.asyncData({ route, store })
+        })
+
+        const handleInsert = async () => {
+            if (!form.title || !form.category || !form.content) {
                 showMsg('请将表单填写完整!')
                 return
             }
-            // this.form.html = this.$refs.md.d_render
-            const { code, data, message } = await this.$store.$api.post('backend/article/insert', this.form)
+            if (loading.value) return
+            toggleLoading(true)
+            // form.html = this.$refs.md.d_render
+            const { code, data, message } = await store.$api.post('backend/article/insert', form)
+            toggleLoading(false)
             if (code === 200) {
                 showMsg({
                     type: 'success',
                     content: message
                 })
-                this.$store.commit('backend/article/insertArticleItem', data)
-                this.$router.push('/backend/article/list')
+                store.commit('backend/article/insertArticleItem', data)
+                router.push('/backend/article/list')
             }
         }
-    },
-    metaInfo() {
+
+        const headTitle = computed(() => {
+            return '发布文章 - M.M.F 小屋'
+        })
+        useHead({
+            // Can be static or computed
+            title: headTitle,
+            meta: [
+                {
+                    name: `description`,
+                    content: headTitle
+                }
+            ]
+        })
+
         return {
-            title: '发布文章 - M.M.F 小屋',
-            meta: [{ vmid: 'description', name: 'description', content: 'M.M.F 小屋' }]
+            form,
+            category,
+            handleInsert
         }
     }
 }
