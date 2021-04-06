@@ -86,7 +86,7 @@ export default {
                 id: $ctx.$oc(store.state, 'global.cookies.userid')
             })
             if (code === 200) {
-                this.$store.commit('global/setCookies', {
+                store.commit('global/setCookies', {
                     ...$ctx.$oc(store.state, 'global.cookies'),
                     useremail: email
                 })

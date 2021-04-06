@@ -173,7 +173,6 @@ export function createRouter(store) {
     router.beforeEach((to, from, next) => {
         if (store) {
             // 如果不需要切换动画，直接返回
-            console.log(store.state.appShell.needPageTransition)
             if (store.state.appShell.needPageTransition) {
                 // 根据 alwaysBackPage, alwaysForwardPage 来判断切换动画
                 // 判断当前是前进还是后退，添加不同的动画效果
