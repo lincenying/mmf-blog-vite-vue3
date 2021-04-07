@@ -27,11 +27,11 @@
 // publish/index.html <<<<<<<<========
 
 // app.vue ========>>>>>>>>
-.slide-left-enter-active {
-    animation: slide-left-enter 0.3s;
+.slide-left-enter-active, .slide-right-enter-active {
+    animation: slide-left-enter 0.3s ease;
 }
-.slide-left-leave-active {
-    animation: slide-left-leave 0.3s;
+.slide-left-leave-active, .slide-right-leave-active {
+    animation: slide-left-leave 0.3s ease;
 }
 @keyframes slide-left-enter {
     0% {

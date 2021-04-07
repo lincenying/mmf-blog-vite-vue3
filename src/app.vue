@@ -3,13 +3,7 @@
         <Navigation :backend="backend"></Navigation>
         <template v-if="!backend">
             <router-view v-slot="{ Component }" class="app-view relative">
-                <transition
-                    :name="appShell.pageTransitionName"
-                    @before-enter="handleBeforeEnter"
-                    @after-enter="handleAfterEnter"
-                    mode="out-in"
-                    :duration="{ enter: 300, leave: 300 }"
-                >
+                <transition :name="appShell.pageTransitionName" @before-enter="handleBeforeEnter" @after-enter="handleAfterEnter" mode="out-in">
                     <keep-alive :include="cacheFronentComponents">
                         <Suspense>
                             <component :is="Component" :key="key" />
