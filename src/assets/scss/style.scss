@@ -79,6 +79,7 @@
         width: 320px;
         margin-left: 20px;
         @media (max-width: 1000px) {
+            flex: 1 1 auto;
             width: 660px;
             margin: 0;
         }
