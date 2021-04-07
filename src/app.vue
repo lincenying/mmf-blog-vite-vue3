@@ -2,7 +2,7 @@
     <div :class="backend ? 'backend' : 'frontend'">
         <Navigation :backend="backend"></Navigation>
         <template v-if="!backend">
-            <router-view v-slot="{ Component }" class="app-view">
+            <router-view v-slot="{ Component }" class="app-view relative">
                 <transition
                     :name="appShell.pageTransitionName"
                     @before-enter="handleBeforeEnter"

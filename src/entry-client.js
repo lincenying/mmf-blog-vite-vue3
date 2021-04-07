@@ -5,10 +5,13 @@ import cookies from 'js-cookie'
 import { createApp } from './main'
 import api from './api/index-client'
 
+import 'virtual:windi.css'
 import 'toastr/build/toastr.css'
 import './assets/css/hljs/googlecode.css'
 import './assets/css/github-markdown.css'
 import './assets/scss/style.scss'
+import '@kangc/v-md-editor/lib/style/base-editor.css'
+import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
 
 VueMarkdownEditor.use(vuepressTheme)
 

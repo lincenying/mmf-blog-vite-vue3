@@ -8,6 +8,21 @@ import legacy from '@vitejs/plugin-legacy'
 // https://vitejs.dev/config/
 export default () => {
     const config = {
+        server: {
+            port: 7776,
+            host: '0.0.0.0',
+            hot: true,
+            disableHostCheck: true,
+            proxy: {
+                '/api': {
+                    target: 'http://localhost:4000',
+                    changeOrigin: true,
+                    pathRewrite: {
+                        '^/api': '/api'
+                    }
+                }
+            }
+        },
         build: {
             target: 'es2015'
         },
@@ -90,24 +105,6 @@ export default () => {
             alias: {
                 '@': path.join(__dirname, './src')
             }
-        },
-        server: {
-            port: 7776,
-            host: '0.0.0.0',
-            hot: true,
-            disableHostCheck: true,
-            proxy: {
-                '/api': {
-                    target: 'http://localhost:4000',
-                    changeOrigin: true,
-                    pathRewrite: {
-                        '^/api': '/api'
-                    }
-                }
-            }
-        },
-        optimizeDeps: {
-            exclude: ['./node_modules/@kangc/v-md-editor/lib/style/base-editor.css']
         }
     }
     return config
