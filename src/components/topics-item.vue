@@ -15,6 +15,7 @@
 </template>
 <script>
 import actions from './item-actions.vue'
+
 export default {
     name: 'topics-item',
     components: {

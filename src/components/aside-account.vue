@@ -13,22 +13,13 @@
 </template>
 
 <script>
-import { getCurrentInstance } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import useGlobal from '@/mixins/global'
 
 export default {
     name: 'aside-account',
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const handleLogout = async () => {
             await store.$api.post('frontend/user/logout', {})

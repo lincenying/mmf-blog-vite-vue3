@@ -54,11 +54,9 @@
     </div>
 </template>
 <script>
-import { onMounted, computed, getCurrentInstance } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { useHead } from '@vueuse/head'
+import { onMounted, computed } from 'vue'
 
+import useGlobal from '@/mixins/global'
 import trending from '../components/aside-trending.vue'
 
 export default {
@@ -70,22 +68,15 @@ export default {
         await store.dispatch('frontend/article/getTrending')
     },
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const trending = computed(() => {
             return store.getters['frontend/article/getTrending']
         })
 
         onMounted(() => {
-            $type.asyncData({ route, store })
+            options.asyncData({ route, store })
         })
 
         const headTitle = computed(() => {

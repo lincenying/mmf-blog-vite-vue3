@@ -23,11 +23,9 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance, reactive } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { useHead } from '@vueuse/head'
+import { computed } from 'vue'
 
+import useGlobal from '@/mixins/global'
 import { showMsg } from '@/utils'
 
 import account from '@/components/aside-account.vue'
@@ -40,15 +38,8 @@ export default {
         account
     },
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const form = reactive({
             old_password: '',

@@ -31,25 +31,15 @@
 </template>
 
 <script>
-import { getCurrentInstance, reactive } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-
+import useGlobal from '@/mixins/global'
 import { strlen, showMsg } from '@/utils'
 
 export default {
     name: 'sign-up',
     props: ['show'],
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const form = reactive({
             username: '',

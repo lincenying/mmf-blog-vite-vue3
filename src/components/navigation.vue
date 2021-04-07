@@ -33,30 +33,22 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
+
+import useGlobal from '@/mixins/global'
 
 export default {
     name: 'navigation',
     props: ['backend'],
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        const router = useRouter()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const userEmail = computed(() => {
-            return $ctx.$oc(store.state, 'global.cookies.useremail')
+            return ctx.$oc(store.state, 'global.cookies.useremail')
         })
         const isLogin = computed(() => {
-            return $ctx.$oc(store.state, 'global.cookies.user')
+            return ctx.$oc(store.state, 'global.cookies.user')
         })
 
         const login = () => {

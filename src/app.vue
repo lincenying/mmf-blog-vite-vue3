@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
+
+import useGlobal from '@/mixins/global'
 
 import reloadPrompt from './components/reload-prompt.vue'
 import Navigation from './components/navigation.vue'
@@ -63,9 +63,8 @@ export default {
         backendMenu
     },
     setup() {
-        const route = useRoute()
-        const router = useRouter()
-        const store = useStore()
+        // eslint-disable-next-line no-unused-vars
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const cacheFronentComponents = ref('frontend-index,frontend-about')
         const cacheBackendComponents = ref('backend-admin-list,backend-article-list,backend-user-list')

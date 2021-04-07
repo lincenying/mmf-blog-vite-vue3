@@ -34,26 +34,17 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance, reactive } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { useToggle } from '@vueuse/core'
+import { computed } from 'vue'
 
+import useGlobal from '@/mixins/global'
 import { showMsg } from '@/utils'
 
 export default {
     name: 'frontend-comment',
     props: ['comments'],
     setup(props) {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const [loading, toggleLoading] = useToggle(false)
 
@@ -63,10 +54,10 @@ export default {
         })
 
         const user = computed(() => {
-            return $ctx.$oc(store.state, 'global.cookies.user')
+            return ctx.$oc(store.state, 'global.cookies.user')
         })
         const userEmail = computed(() => {
-            return $ctx.$oc(store.state, 'global.cookies.useremail')
+            return ctx.$oc(store.state, 'global.cookies.useremail')
         })
 
         const loadcomment = async () => {

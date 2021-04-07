@@ -24,11 +24,9 @@
 </template>
 
 <script>
-import { onMounted, computed, getCurrentInstance, ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { useHead } from '@vueuse/head'
+import { onMounted, computed } from 'vue'
 
+import useGlobal from '@/mixins/global'
 import { showMsg } from '@/utils'
 
 import account from '../components/aside-account.vue'
@@ -49,16 +47,8 @@ export default {
         }
     },
     setup() {
-        const ins = getCurrentInstance()
-        console.log(ins)
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const username = ref('')
         const email = ref('')
@@ -83,11 +73,11 @@ export default {
             const { code, data } = await store.$api.post('frontend/user/account', {
                 email,
                 username,
-                id: $ctx.$oc(store.state, 'global.cookies.userid')
+                id: ctx.$oc(store.state, 'global.cookies.userid')
             })
             if (code === 200) {
                 store.commit('global/setCookies', {
-                    ...$ctx.$oc(store.state, 'global.cookies'),
+                    ...ctx.$oc(store.state, 'global.cookies'),
                     useremail: email
                 })
                 showMsg({

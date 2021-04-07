@@ -18,11 +18,9 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { useHead } from '@vueuse/head'
-import { useToggle } from '@vueuse/core'
+import { computed, onMounted } from 'vue'
+
+import useGlobal from '@/mixins/global'
 
 export default {
     name: 'backend-category-list',
@@ -34,15 +32,8 @@ export default {
         })
     },
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const category = computed(() => {
             return store.getters['global/category/getCategoryList']
@@ -53,7 +44,7 @@ export default {
         const loadMore = async () => {
             if (loading.value) return
             toggleLoading(true)
-            await $type.asyncData({ store, route })
+            await options.asyncData({ store, route })
             toggleLoading(false)
         }
 

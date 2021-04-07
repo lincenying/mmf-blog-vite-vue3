@@ -30,15 +30,12 @@
     </div>
 </template>
 <script>
-import { onActivated, computed, getCurrentInstance } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { useToggle } from '@vueuse/core'
-import { useHead } from '@vueuse/head'
+import { onActivated, computed } from 'vue'
 
 import { ContentLoader } from 'vue-content-loader'
 
 import saveScroll from '@/mixins/save-scroll'
+import useGlobal from '@/mixins/global'
 
 import topicsItem from '../components/topics-item.vue'
 import topicsItemNone from '../components/topics-item-none.vue'
@@ -68,15 +65,8 @@ export default {
         ])
     },
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const route = useRoute()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         saveScroll()
 
@@ -94,7 +84,7 @@ export default {
         const loadMore = async (page = topics.value.page + 1) => {
             if (loading.value) return
             toggleLoading(true)
-            await $type.asyncData({ store, route }, { page })
+            await options.asyncData({ store, route }, { page })
             toggleLoading(false)
         }
         onActivated(() => {

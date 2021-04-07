@@ -15,14 +15,12 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance, reactive } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { useHead } from '@vueuse/head'
+import { computed } from 'vue'
 import cookies from 'js-cookie'
 
+import useGlobal from '@/mixins/global'
 import { showMsg } from '@/utils'
-// import api from '~api'
+
 import aInput from '@/components/_input.vue'
 
 export default {
@@ -37,15 +35,8 @@ export default {
         next()
     },
     setup() {
-        const ins = getCurrentInstance()
         // eslint-disable-next-line no-unused-vars
-        const $ctx = ins.appContext.config.globalProperties
-        // eslint-disable-next-line no-unused-vars
-        const $type = ins.type
-        // eslint-disable-next-line no-unused-vars
-        const router = useRouter()
-        // eslint-disable-next-line no-unused-vars
-        const store = useStore()
+        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
         const form = reactive({
             username: '',

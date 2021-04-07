@@ -1,17 +1,11 @@
-import { watch, getCurrentInstance } from 'vue'
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router'
-import { useStore } from 'vuex'
+import { watch } from 'vue'
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+
+import useGlobal from '@/mixins/global'
 
 export default () => {
-    const ins = getCurrentInstance()
     // eslint-disable-next-line no-unused-vars
-    const $ctx = ins.appContext.config.globalProperties
-    // eslint-disable-next-line no-unused-vars
-    const $type = ins.type
-    // eslint-disable-next-line no-unused-vars
-    const route = useRoute()
-    // eslint-disable-next-line no-unused-vars
-    const store = useStore()
+    const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
 
     watch(
         () => route.fullPath,
@@ -24,7 +18,7 @@ export default () => {
     )
 
     onBeforeRouteUpdate(async (to, from, next) => {
-        await $type.asyncData({ route: to, store })
+        await options.asyncData({ route: to, store })
         next()
     })
 
