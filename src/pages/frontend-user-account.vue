@@ -48,7 +48,7 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const username = ref('')
         const email = ref('')
@@ -61,7 +61,7 @@ export default {
             }
         }
 
-        const handleSubmit = async () => {
+        const handleSubmit = useLockFn(async () => {
             const reg = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_-]+)(\.[a-zA-Z0-9_-]+)$/i
             if (!email) {
                 showMsg('请填写邮箱地址!')
@@ -85,7 +85,8 @@ export default {
                     content: data
                 })
             }
-        }
+        })
+
         onMounted(() => {
             getUser()
         })

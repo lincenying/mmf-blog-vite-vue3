@@ -66,7 +66,7 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         saveScroll()
 

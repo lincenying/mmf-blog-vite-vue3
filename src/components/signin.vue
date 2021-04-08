@@ -3,7 +3,7 @@
         <span class="center-helper"></span>
         <div class="modal modal-signup">
             <h2 class="modal-title">登录</h2>
-            <a @click="close" href="javascript:;" class="modal-close"><i class="icon icon-close-black"></i></a>
+            <a @click="handleClose" href="javascript:;" class="modal-close"><i class="icon icon-close-black"></i></a>
             <div class="modal-content">
                 <div class="signup-form">
                     <div class="input-wrap">
@@ -14,8 +14,8 @@
                         <input v-model="form.password" type="password" placeholder="密码" class="base-input" />
                         <p class="error-info input-info hidden">长度至少 6 位</p>
                     </div>
-                    <a @click="login" href="javascript:;" class="btn signup-btn btn-yellow">确认登录</a>
-                    <a @click="register" href="javascript:;" class="btn signup-btn btn-blue block">我要注册</a>
+                    <a @click="handleLogin" href="javascript:;" class="btn signup-btn btn-yellow">确认登录</a>
+                    <a @click="handleRegister" href="javascript:;" class="btn signup-btn btn-blue block">我要注册</a>
                 </div>
             </div>
         </div>
@@ -31,24 +31,23 @@ export default {
     props: ['show'],
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const form = reactive({
             username: '',
             password: ''
         })
 
-        const close = () => {
+        const handleClose = () => {
             store.commit('global/showLoginModal', false)
         }
-        const register = () => {
+        const handleRegister = () => {
             store.commit('global/showLoginModal', false)
             store.commit('global/showRegisterModal', true)
         }
-        const login = async () => {
+        const handleLogin = useLockFn(async () => {
             if (!form.username || !form.password) {
-                showMsg('请将表单填写完整!')
-                return
+                return showMsg('请将表单填写完整!')
             }
             const { code, message } = await store.$api.post('frontend/user/login', form)
             if (code === 200) {
@@ -58,13 +57,13 @@ export default {
                 })
                 window.location.reload()
             }
-        }
+        })
 
         return {
             form,
-            close,
-            register,
-            login
+            handleClose,
+            handleRegister,
+            handleLogin
         }
     },
     methods: {}

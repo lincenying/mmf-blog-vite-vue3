@@ -40,12 +40,12 @@
                         <h3 class="about-title">关于网站</h3>
                         <p>
                             源代码:
-                            <a href="https://github.com/lincenying/mmf-blog-vue2-pwa-ssr" target="_blank">mmf-blog-vue2-pwa-ssr</a> 欢迎收藏加星
+                            <a href="https://github.com/lincenying/mmf-blog-vite-vue3" target="_blank">mmf-blog-vite-vue3</a> 欢迎收藏加星
                         </p>
-                        <p>本站服务端采用 express + mongoDB 搭建, 客户端采用 Vue2 的服务端渲染搭建</p>
+                        <p>本站服务端采用 express + mongoDB 搭建, 客户端采用 Vue3 渲染搭建</p>
                         <p>网站分成前台和后台, 前台采用 SSR 模式渲染, 后台采用 SPA 模式</p>
                         <p>主要功能包括: 管理员, 用户, 分类, 文章, 评论, 文章点赞</p>
-                        <p>主要技术栈: pwa, webpack, babel, eslint, express, mongoose, vue2, vue2-router, vuex</p>
+                        <p>主要技术栈: pwa, vitejs2, babel, eslint, express, mongoose, vue3, vue-router4, vuex4</p>
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const trending = computed(() => {
             return store.getters['frontend/article/getTrending']

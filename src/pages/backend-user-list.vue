@@ -41,7 +41,7 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const user = computed(() => {
             return store.getters['backend/user/getUserList']

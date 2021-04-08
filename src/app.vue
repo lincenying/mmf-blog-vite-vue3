@@ -64,7 +64,7 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const cacheFronentComponents = ref('frontend-index,frontend-about')
         const cacheBackendComponents = ref('backend-admin-list,backend-article-list,backend-user-list')

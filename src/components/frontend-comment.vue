@@ -44,7 +44,7 @@ export default {
     props: ['comments'],
     setup(props) {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const [loading, toggleLoading] = useToggle(false)
 
@@ -69,7 +69,7 @@ export default {
             })
             toggleLoading(false)
         }
-        const postComment = async () => {
+        const postComment = useLockFn(async () => {
             if (!user.value) {
                 showMsg('请先登录!')
                 store.commit('global/showLoginModal', true)
@@ -86,7 +86,7 @@ export default {
                     store.commit('global/comment/insertCommentItem', data)
                 }
             }
-        }
+        })
         const handleReply = item => {
             console.log(item)
             form.content = '回复 @' + item.userid.username + ': '

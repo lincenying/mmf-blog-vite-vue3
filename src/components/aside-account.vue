@@ -19,7 +19,7 @@ export default {
     name: 'aside-account',
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const handleLogout = async () => {
             await store.$api.post('frontend/user/logout', {})

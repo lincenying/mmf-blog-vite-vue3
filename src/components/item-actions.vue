@@ -1,9 +1,9 @@
 <template>
     <div class="actions-wrap">
-        <a v-if="item.like_status" @click="like" href="javascript:;" class="action-item active"
+        <a v-if="item.like_status" @click="handleLike" href="javascript:;" class="action-item active"
             ><i class="icon icon-action-voteup-active"></i><span class="text">{{ item.like }} 赞</span></a
         >
-        <a v-else @click="like" href="javascript:;" class="action-item"
+        <a v-else @click="handleLike" href="javascript:;" class="action-item"
             ><i class="icon icon-action-voteup"></i><span class="text">{{ item.like }} 赞</span></a
         >
         <a href="javascript:;" class="action-item"
@@ -12,7 +12,7 @@
         <a href="javascript:;" class="action-item action-item-fav"
             ><i class="icon icon-action-fav"></i><span class="text">{{ item.visit }} 浏览</span></a
         >
-        <a @click="share" href="javascript:;" class="action-item"><i class="icon icon-action-share"></i><span class="text">分享</span></a>
+        <a @click="handleShare" href="javascript:;" class="action-item"><i class="icon icon-action-share"></i><span class="text">分享</span></a>
     </div>
 </template>
 <script>
@@ -27,13 +27,13 @@ export default {
     props: ['item'],
     setup(props) {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const user = computed(() => {
             return !!ctx.$oc(store.state, 'global.cookies.user')
         })
 
-        const like = async () => {
+        const handleLike = useLockFn(async () => {
             if (!user.value) {
                 showMsg('请先登录!')
                 store.commit('global/showLoginModal', true)
@@ -52,8 +52,8 @@ export default {
                     status: !props.item.like_status
                 })
             }
-        }
-        const share = () => {
+        })
+        const handleShare = () => {
             const top = window.screen.height / 2 - 250
             const left = window.screen.width / 2 - 300
             const title = props.item.title + ' - M.M.F 小屋'
@@ -73,8 +73,8 @@ export default {
         }
 
         return {
-            like,
-            share
+            handleLike,
+            handleShare
         }
     }
 }

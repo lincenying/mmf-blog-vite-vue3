@@ -14,7 +14,7 @@
                             <input type="password" v-model="form.re_password" placeholder="确认密码" class="base-input" name="re_password" />
                         </a-input>
                     </div>
-                    <div class="settings-footer"><a @click="modify" href="javascript:;" class="btn btn-yellow">保存设置</a></div>
+                    <div class="settings-footer"><a @click="handleSubmit" href="javascript:;" class="btn btn-yellow">保存设置</a></div>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const form = reactive({
             old_password: '',
@@ -47,13 +47,11 @@ export default {
             re_password: ''
         })
 
-        const modify = async () => {
+        const handleSubmit = useLockFn(async () => {
             if (!form.password || !form.old_password || !form.re_password) {
-                showMsg('请将表单填写完整!')
-                return
+                return showMsg('请将表单填写完整!')
             } else if (form.password !== form.re_password) {
-                showMsg('两次密码输入不一致!')
-                return
+                return showMsg('两次密码输入不一致!')
             }
             const { code, data } = await store.$api.post('frontend/user/password', form)
             if (code === 200) {
@@ -65,7 +63,7 @@ export default {
                 form.password = ''
                 form.re_password = ''
             }
-        }
+        })
 
         const headTitle = computed(() => {
             return '密码 - M.M.F 小屋'
@@ -84,7 +82,7 @@ export default {
 
         return {
             form,
-            modify
+            handleSubmit
         }
     }
 }

@@ -36,23 +36,22 @@ export default {
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
-        const { ctx, options, route, router, store, useToggle, useHead, ref, reactive } = useGlobal()
+        const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const form = reactive({
             username: '',
             password: ''
         })
 
-        const handleLogin = async () => {
+        const handleLogin = useLockFn(async () => {
             if (!form.username || !form.password) {
-                showMsg('请输入用户名和密码!')
-                return
+                return showMsg('请输入用户名和密码!')
             }
             const { code, data } = await store.$api.post('backend/admin/login', form)
             if (data && code === 200) {
                 router.push('/backend/article/list')
             }
-        }
+        })
 
         const headTitle = computed(() => {
             return '管理员登录 - M.M.F 小屋'
