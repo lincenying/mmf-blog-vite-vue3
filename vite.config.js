@@ -3,10 +3,10 @@ import styleImport from 'vite-plugin-style-import'
 import vue from '@vitejs/plugin-vue'
 import WindiCSS from 'vite-plugin-windicss'
 import { VitePWA } from 'vite-plugin-pwa'
-import legacy from '@vitejs/plugin-legacy'
+// import legacy from '@vitejs/plugin-legacy'
 
 // https://vitejs.dev/config/
-export default () => {
+export default ({ mode }) => {
     const config = {
         server: {
             port: 7776,
@@ -34,9 +34,9 @@ export default () => {
             }
         },
         plugins: [
-            legacy({
-                targets: ['defaults', 'not IE 11']
-            }),
+            // legacy({
+            //     targets: ['defaults', 'not IE 11']
+            // }),
             vue(),
             styleImport({
                 libs: [
@@ -76,7 +76,7 @@ export default () => {
                 safelist: 'prose prose-sm m-auto text-left'
             }),
             VitePWA({
-                mode: 'development',
+                mode,
                 base: '/',
                 manifest: {
                     name: 'M.M.F小屋',
@@ -125,7 +125,20 @@ export default () => {
                     lang: 'zh-CN'
                 },
                 workbox: {
-                    // workbox options for generateSW
+                    cacheId: 'mmf-blog-vite-vue3',
+                    runtimeCaching: [
+                        {
+                            urlPattern: /api/,
+                            handler: 'NetworkFirst',
+                            options: {
+                                networkTimeoutSeconds: 1,
+                                cacheName: 'api-cache',
+                                cacheableResponse: {
+                                    statuses: [0, 200]
+                                }
+                            }
+                        }
+                    ]
                 }
             })
         ],
