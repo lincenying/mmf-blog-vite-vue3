@@ -12,13 +12,9 @@
             <template v-else-if="article.data._id">
                 <div class="card card-question-head">
                     <div class="question-content">
-                        <router-link
-                            :to="'/category/' + article.data.category"
-                            v-text="article.data.category_name"
-                            class="topic-link-item"
-                        ></router-link>
+                        <router-link :to="'/category/' + article.data.category" class="topic-link-item">{{ article.data.category_name }}</router-link>
                         <h2 class="question-title">
-                            <router-link :to="'/article/' + article.data._id" v-text="article.data.title" class="question-title-link"></router-link>
+                            <router-link :to="'/article/' + article.data._id" class="question-title-link">{{ article.data.title }}</router-link>
                         </h2>
                     </div>
                 </div>

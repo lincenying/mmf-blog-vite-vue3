@@ -17,9 +17,9 @@
                         <span class="comment-author-wrap">
                             <a href="javascript:;" class="comment-author">{{ item.userid.username }}</a>
                         </span>
-                        <div class="comment-content" v-text="item.content"></div>
+                        <div class="comment-content">{{ item.content }}</div>
                         <div class="comment-footer">
-                            <span class="comment-time" v-text="item.creat_date"></span>
+                            <span class="comment-time">{{ item.creat_date }}</span>
                             <a @click="handleReply(item)" href="javascript:;" class="comment-action-item comment-reply">回复</a>
                         </div>
                     </div>

@@ -89,7 +89,7 @@ export default {
         }
         onActivated(() => {
             console.log('onActivated')
-            loadMore(1)
+            if (!topics.value.path) loadMore(1)
         })
 
         // onMounted(() => {
