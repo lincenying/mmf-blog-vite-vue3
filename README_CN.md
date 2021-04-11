@@ -22,6 +22,10 @@ vue2 spa版本: [https://github.com/lincenying/mmf-blog-vue2](https://github.com
 
 vue2 pwa ssr版本: [https://github.com/lincenying/mmf-blog-vue2-pwa-ssr](https://github.com/lincenying/mmf-blog-vue2-pwa-ssr)
 
+vue3 spa版本: [https://github.com/lincenying/mmf-blog-vite-vue3](https://github.com/lincenying/mmf-blog-vite-vue3)
+
+vue3 pwa ssr版本: [https://github.com/lincenying/mmf-blog-vite-vue3-ssr](https://github.com/lincenying/mmf-blog-vite-vue3-ssr)
+
 ---
 
 先安装 api server:
@@ -31,6 +35,10 @@ koa2版: https://github.com/lincenying/mmf-blog-api-koa2-v2
 express版: https://github.com/lincenying/mmf-blog-api-v2
 
 ```bash
+
+# 安装 workbox-cli
+yarn global add workbox-cli
+
 # 安装依赖
 yarn  #or  npm install
 # 注意: 不要用 cnpm 安装依赖

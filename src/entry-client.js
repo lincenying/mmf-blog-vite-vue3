@@ -2,8 +2,12 @@ import VueMarkdownEditor from '@kangc/v-md-editor'
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
 import cookies from 'js-cookie'
 
+import './registerServiceWorker'
+
 import { createApp } from './main'
 import api from './api/index-client'
+
+// import reloadPrompt from './components/reload-prompt.vue'
 
 import 'virtual:windi.css'
 import 'toastr/build/toastr.css'
@@ -19,9 +23,14 @@ const { app, router, store } = createApp()
 
 // wait until router is ready before mounting to ensure hydration match
 router.isReady().then(() => {
+    // app.component('reload-prompt', reloadPrompt)
     app.use(VueMarkdownEditor).mount('#app')
     console.log('client router ready')
 })
+
+if (window.__INITIAL_STATE__) {
+    store.replaceState(window.__INITIAL_STATE__)
+}
 
 store.$api = store.state.$api = api
 store.commit('global/setCookies', {
