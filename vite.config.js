@@ -9,7 +9,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default () => {
     const config = {
         server: {
-            port: 7776,
+            port: 17776,
             host: '0.0.0.0',
             hot: true,
             disableHostCheck: true,

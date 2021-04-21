@@ -36,7 +36,7 @@
             </div>
             <backend-menu v-if="!isLogin"></backend-menu>
         </div>
-        <reload-prompt></reload-prompt>
+        <reload-prompt v-if="!isSSR"></reload-prompt>
     </div>
 </template>
 
@@ -50,7 +50,7 @@ import signUp from './components/signup.vue'
 import signIn from './components/signin.vue'
 import backTop from './components/backtop.vue'
 import backendMenu from './components/backend-menu.vue'
-import reloadPrompt from './components/reload-prompt.vue'
+// import reloadPrompt from './components/reload-prompt.vue'
 
 export default {
     name: 'app',
@@ -59,14 +59,15 @@ export default {
         signUp,
         signIn,
         backTop,
-        backendMenu,
-        reloadPrompt
+        backendMenu
+        // reloadPrompt
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
         const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         const isSSR = ref(!!import.meta.env.SSR)
+        const isPROD = ref(!!import.meta.env.PROD)
 
         const cacheFronentComponents = ref('frontend-index,frontend-about')
         const cacheBackendComponents = ref('backend-admin-list,backend-article-list,backend-user-list')
@@ -98,6 +99,7 @@ export default {
 
         return {
             isSSR,
+            isPROD,
             cacheFronentComponents,
             cacheBackendComponents,
             global,
