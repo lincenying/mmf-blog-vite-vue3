@@ -50,6 +50,7 @@ import signUp from './components/signup.vue'
 import signIn from './components/signin.vue'
 import backTop from './components/backtop.vue'
 import backendMenu from './components/backend-menu.vue'
+import reloadPrompt from './components/reload-prompt.vue'
 
 export default {
     name: 'app',
@@ -58,7 +59,8 @@ export default {
         signUp,
         signIn,
         backTop,
-        backendMenu
+        backendMenu,
+        reloadPrompt
     },
     setup() {
         // eslint-disable-next-line no-unused-vars
