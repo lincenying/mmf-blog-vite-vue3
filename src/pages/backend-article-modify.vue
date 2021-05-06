@@ -15,13 +15,15 @@
             </a-input>
             <div class="settings-section">
                 <div id="modify-content" class="settings-item-content">
-                    <v-md-editor
-                        v-model="form.content"
-                        @upload-image="handleUploadImage"
-                        :disabled-menus="[]"
-                        mode="edit"
-                        height="500px"
-                    ></v-md-editor>
+                    <client-only>
+                        <v-md-editor
+                            v-model="form.content"
+                            @upload-image="handleUploadImage"
+                            :disabled-menus="[]"
+                            mode="edit"
+                            height="500px"
+                        ></v-md-editor>
+                    </client-only>
                 </div>
             </div>
         </div>
@@ -101,10 +103,7 @@ export default {
             const { code, data, message } = await store.$api.post('backend/article/modify', form)
             toggleLoading(false)
             if (code === 200) {
-                showMsg({
-                    type: 'success',
-                    content: message
-                })
+                showMsg({ type: 'success', content: message })
                 store.commit('backend/article/updateArticleItem', data)
                 router.push('/backend/article/list')
             }

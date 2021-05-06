@@ -15,13 +15,16 @@
             </a-input>
             <div class="settings-section">
                 <div id="post-content" class="settings-item-content">
-                    <v-md-editor
-                        v-model="form.content"
-                        @upload-image="handleUploadImage"
-                        :disabled-menus="[]"
-                        mode="edit"
-                        height="500px"
-                    ></v-md-editor>
+                    <client-only>
+                        <v-md-editor
+                            v-if="isClient"
+                            v-model="form.content"
+                            @upload-image="handleUploadImage"
+                            :disabled-menus="[]"
+                            mode="edit"
+                            height="500px"
+                        ></v-md-editor>
+                    </client-only>
                 </div>
             </div>
         </div>
@@ -54,6 +57,8 @@ export default {
         // eslint-disable-next-line no-unused-vars
         const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
+        const isClient = ref(false)
+
         const category = computed(() => {
             return store.getters['global/category/getCategoryList']
         })
@@ -69,6 +74,7 @@ export default {
 
         onMounted(async () => {
             await options.asyncData({ route, store })
+            isClient.value = true
         })
 
         const handleInsert = async () => {
@@ -82,10 +88,7 @@ export default {
             const { code, data, message } = await store.$api.post('backend/article/insert', form)
             toggleLoading(false)
             if (code === 200) {
-                showMsg({
-                    type: 'success',
-                    content: message
-                })
+                showMsg({ type: 'success', content: message })
                 store.commit('backend/article/insertArticleItem', data)
                 router.push('/backend/article/list')
             }
@@ -120,6 +123,7 @@ export default {
         })
 
         return {
+            isClient,
             form,
             category,
             handleInsert,

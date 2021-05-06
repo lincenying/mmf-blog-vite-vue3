@@ -14,7 +14,7 @@
                 <template v-else-if="topics.data.length > 0">
                     <topics-item v-for="item in topics.data" :item="item" :key="item._id"></topics-item>
                     <div class="load-more-wrap">
-                        <a v-if="topics.hasNext" @click="loadMore()" href="javascript:;" class="load-more" :class="loading ? 'loading' : ''"
+                        <a v-if="topics.hasNext" @click="loadMore" href="javascript:;" class="load-more" :class="loading ? 'loading' : ''"
                             >{{ loading ? '加载中' : '更多' }} <i class="icon icon-circle-loading"></i>
                         </a>
                     </div>
@@ -64,13 +64,15 @@ export default {
             store.dispatch('frontend/article/getArticleList', { ...config, limit: 10, id, path, key, by })
         ])
     },
+    beforeRouteUpdate(to, form, next) {
+        console.log(to)
+        next()
+    },
     setup() {
         // eslint-disable-next-line no-unused-vars
         const { ctx, options, route, router, store, useToggle, useHead, useLockFn, ref, reactive } = useGlobal()
 
         saveScroll()
-
-        const [loading, toggleLoading] = useToggle(false)
 
         const topics = computed(() => {
             return store.getters['frontend/article/getArticleList']
@@ -81,12 +83,15 @@ export default {
         const trending = computed(() => {
             return store.getters['frontend/article/getTrending']
         })
+
+        const [loading, toggleLoading] = useToggle(false)
         const loadMore = async (page = topics.value.page + 1) => {
             if (loading.value) return
             toggleLoading(true)
             await options.asyncData({ store, route }, { page })
             toggleLoading(false)
         }
+
         onActivated(() => {
             console.log('frontend-index onActivated:' + route.path)
             if (topics.value.path !== route.path) loadMore(1)

@@ -16,11 +16,13 @@ demo: [http://vue3.mmxiaowu.com](http://vue3.mmxiaowu.com)
 
 #### 其他版本
 
-react spa版本: [https://github.com/lincenying/mmf-blog-react-v2](https://github.com/lincenying/mmf-blog-react-v2)
+react spa class版本: [https://github.com/lincenying/mmf-blog-react-v2](https://github.com/lincenying/mmf-blog-react-v2)
+
+react spa hooks版本: [https://github.com/lincenying/mmf-blog-vite-react](https://github.com/lincenying/mmf-blog-vite-react)
 
 vue2 spa版本: [https://github.com/lincenying/mmf-blog-vue2](https://github.com/lincenying/mmf-blog-vue2)
 
-vue2 pwa ssr版本: [https://github.com/lincenying/mmf-blog-vue2-pwa-ssr](https://github.com/lincenying/mmf-blog-vue2-pwa-ssr)
+vue2 ssr版本: [https://github.com/lincenying/mmf-blog-vue2-ssr](https://github.com/lincenying/mmf-blog-vue2-ssr)
 
 vue3 spa版本: [https://github.com/lincenying/mmf-blog-vite-vue3](https://github.com/lincenying/mmf-blog-vite-vue3)
 
@@ -53,7 +55,7 @@ $ yarn serve
 http://localhost:7776
 
 登录
-http://localhost:7776/backend
+http://localhost:7776/backend-login
 
 # LICENSE
 
