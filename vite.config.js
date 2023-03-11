@@ -1,14 +1,32 @@
-const path = require('path')
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { loadEnv } from 'vite'
-// import styleImport from 'vite-plugin-style-import'
-import vue from '@vitejs/plugin-vue'
-import WindiCSS from 'vite-plugin-windicss'
-// import legacy from '@vitejs/plugin-legacy'
+
+import vuePlugin from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+
+import UnoCSS from 'unocss/vite'
+import { createHtmlPlugin } from 'vite-plugin-html'
+
+import VueMacros from 'unplugin-vue-macros/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
 import { VitePWA } from 'vite-plugin-pwa'
+
+export const ssrTransformCustomDir = () => {
+    return {
+        props: [],
+        needRuntime: true
+    }
+}
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
     const config = {
@@ -19,16 +37,13 @@ export default ({ mode }) => {
             disableHostCheck: true,
             proxy: {
                 '/api': {
-                    target: 'http://localhost:4000',
+                    target: 'https://api.mmxiaowu.com',
                     changeOrigin: true,
                     pathRewrite: {
                         '^/api': '/api'
                     }
                 }
             }
-        },
-        build: {
-            target: 'es2015'
         },
         css: {
             preprocessorOptions: {
@@ -38,53 +53,105 @@ export default ({ mode }) => {
             }
         },
         plugins: [
-            // legacy({
-            //     targets: ['defaults', 'not IE 11']
-            // }),
-            vue(),
-            // styleImport({
-            //     libs: [
-            //         {
-            //             libraryName: 'ant-design-vue',
-            //             esModule: true,
-            //             resolveStyle: name => {
-            //                 return `ant-design-vue/es/${name}/style/index`
-            //             }
-            //         },
-            //         {
-            //             libraryName: 'antd',
-            //             esModule: true,
-            //             resolveStyle: name => {
-            //                 return `antd/es/${name}/style/index`
-            //             }
-            //         },
-            //         {
-            //             libraryName: 'vant',
-            //             esModule: true,
-            //             resolveStyle: name => {
-            //                 return `vant/es/${name}/style/index`
-            //             }
-            //         },
-            //         {
-            //             libraryName: 'element-plus',
-            //             resolveStyle: name => {
-            //                 return `element-plus/lib/theme-chalk/${name}.css`
-            //             },
-            //             resolveComponent: name => {
-            //                 return `element-plus/lib/${name}`
-            //             }
-            //         }
-            //     ]
-            // }),
-            WindiCSS({
-                scan: {
-                    dirs: ['.'], // all files in the cwd
-                    fileExtensions: ['vue'] // also enabled scanning for vue/js/ts
+            createHtmlPlugin({
+                minify: false,
+                inject: {
+                    data: {
+                        VITE_APP_ENV: process.env.VITE_APP_ENV,
+                        VITE_APP_API_DOMAIN: process.env.VITE_APP_API_DOMAIN,
+                        VITE_APP_API: process.env.VITE_APP_API,
+                        MODE: mode
+                    }
                 }
+            }),
+            VueMacros({
+                plugins: {
+                    vue: vuePlugin({
+                        template: {
+                            compilerOptions: {
+                                isCustomElement: tag => ['def'].includes(tag)
+                            },
+                            directiveTransforms: {
+                                loading: ssrTransformCustomDir
+                            }
+                        }
+                    }),
+                    vueJsx: vueJsx()
+                }
+            }),
+            AutoImport({
+                eslintrc: {
+                    enabled: true
+                },
+                include: [
+                    /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+                    /\.vue$/,
+                    /\.vue\?vue/, // .vue
+                    /\.md$/ // .md
+                ],
+                imports: [
+                    'vue',
+                    'vue-router',
+                    '@vueuse/core',
+                    '@vueuse/head',
+                    {
+                        pinia: ['defineStore', 'storeToRefs'],
+                        'vue-router': ['createRouter', 'createWebHashHistory'],
+                        '@/utils': ['UTC2Date', 'deepClone', 'showMsg']
+                    }
+                ],
+                dts: 'src/auto-imports.d.ts',
+                dirs: ['src/components', 'src/pinia', 'src/mixins'],
+
+                resolvers: [ElementPlusResolver()],
+                vueTemplate: true,
+                cache: false
+            }),
+            Components({
+                include: [
+                    /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+                    /\.vue$/,
+                    /\.vue\?vue/, // .vue
+                    /\.md$/ // .md
+                ],
+                resolvers: [ElementPlusResolver()],
+                dts: 'src/components.d.ts'
+            }),
+            UnoCSS({
+                /* options */
             }),
             VitePWA({
                 // mode: 'development',
                 base: '/',
+                registerType: 'autoUpdate',
+                workbox: {
+                    globPatterns: ['**/*.{js,css}'],
+                    cacheId: 'mmf-blog-vite-vue3',
+                    runtimeCaching: [
+                        {
+                            urlPattern: /api/,
+                            handler: 'NetworkFirst',
+                            options: {
+                                networkTimeoutSeconds: 1,
+                                cacheName: 'api-cache',
+                                cacheableResponse: {
+                                    statuses: [0, 200]
+                                }
+                            }
+                        },
+                        {
+                            urlPattern: /^https:\/\/cdn\.jsdelivr\.net/,
+                            handler: 'NetworkFirst',
+                            options: {
+                                networkTimeoutSeconds: 1,
+                                cacheName: 'cdn-cache',
+                                cacheableResponse: {
+                                    statuses: [0, 200]
+                                }
+                            }
+                        }
+                    ]
+                },
                 manifest: {
                     name: 'M.M.F小屋',
                     short_name: 'M.M.F小屋',
@@ -130,44 +197,6 @@ export default ({ mode }) => {
                     start_url: '/',
                     display: 'standalone',
                     lang: 'zh-CN'
-                },
-                workbox: {
-                    cacheId: 'mmf-blog-vite-vue3',
-                    runtimeCaching: [
-                        {
-                            urlPattern: /api/,
-                            handler: 'NetworkFirst',
-                            options: {
-                                networkTimeoutSeconds: 1,
-                                cacheName: 'api-cache',
-                                cacheableResponse: {
-                                    statuses: [0, 200]
-                                }
-                            }
-                        },
-                        {
-                            urlPattern: /^https:\/\/cdn\.jsdelivr\.net/,
-                            handler: 'NetworkFirst',
-                            options: {
-                                networkTimeoutSeconds: 1,
-                                cacheName: 'cdn-cache',
-                                cacheableResponse: {
-                                    statuses: [0, 200]
-                                }
-                            }
-                        },
-                        {
-                            urlPattern: /^https:\/\/fdn\.geekzu\.org/,
-                            handler: 'NetworkFirst',
-                            options: {
-                                networkTimeoutSeconds: 1,
-                                cacheName: 'avatar-cache',
-                                cacheableResponse: {
-                                    statuses: [0, 200]
-                                }
-                            }
-                        }
-                    ]
                 }
             })
         ],

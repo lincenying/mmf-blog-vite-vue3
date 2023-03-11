@@ -1,0 +1,24 @@
+<template>
+    <div v-show="scrollTop > 500" class="back-top"><a @click="handleBackTop" href="javascript:;"></a></div>
+</template>
+
+<script setup>
+defineOptions({
+    name: 'back-top'
+})
+
+const { y: scrollTop } = useWindowScroll()
+
+const handleBackTop = () => {
+    let top = scrollTop.value
+    const timer = setInterval(() => {
+        top -= Math.abs(top * 0.1)
+        if (top <= 1) {
+            top = 0
+            clearInterval(timer)
+        }
+        window.scrollTo(0, top)
+        // document.body.scrollTop = top
+    }, 20)
+}
+</script>

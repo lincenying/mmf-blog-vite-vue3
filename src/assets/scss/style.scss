@@ -330,6 +330,8 @@
 
 // 详情页内容
 .card-answer {
+    min-height: calc(100vh - 60px - 40px - 20px);
+
     .answer-content {
         padding: 25px;
 

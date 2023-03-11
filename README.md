@@ -1,8 +1,8 @@
 # mmf-blog vuejs 3.0 v3         [中文说明](https://github.com/lincenying/mmf-blog-vite-vue3/blob/main/README_CN.md)
 
-demo: [http://vue3.mmxiaowu.com](http://vue3.mmxiaowu.com)
+demo: [http://www.mmxiaowu.com](http://www.mmxiaowu.com)
 
-The main technical stack: vue 3, vue-router 4, vuex 4, vitejs 2, eslint
+The main technical stack: vue 3, vue-router 4, pinia, vitejs 4, unocss, eslint, pwa, ssr
 
 ---
 
@@ -44,10 +44,10 @@ $ yarn serve
 ```
 
 Home Site
-http://localhost:7776
+http://localhost:7777
 
 Login
-http://localhost:7776/backend-login
+http://localhost:7777/backend-login
 
 # LICENSE
 

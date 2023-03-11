@@ -71,6 +71,10 @@ const backendConfig = {
 }
 
 const routes = [
+    {
+        path: '/index.html',
+        redirect: '/'
+    },
     { name: 'index', path: '/', component: index, meta: { index: 1 } },
     { name: 'trending', path: '/trending/:by', component: index, meta: { index: 1 } },
     { name: 'category', path: '/category/:id', component: index, meta: { index: 1 } },
@@ -97,13 +101,13 @@ const routes = [
         ]
     },
 
-    { name: 'login', path: '/backend-login', component: login },
     {
         name: 'backend',
         path: '/backend',
         component: backend,
         redirect: '/backend/article/list',
         children: [
+            { name: 'login', path: 'login', component: login },
             { name: 'admin_list', path: 'admin/list', component: adminList, ...backendConfig },
             { name: 'admin_modify', path: 'admin/modify/:id', component: adminModify, ...backendConfig },
             { name: 'article_list', path: 'article/list', component: articleList, ...backendConfig },
@@ -134,26 +138,44 @@ export function createRouter(store) {
     const slideRight = 'slide-right'
 
     router.beforeEach((to, from, next) => {
-        if (store) {
-            // 如果不需要切换动画，直接返回
-            if (store.state.appShell.needPageTransition) {
-                // 根据 alwaysBackPage, alwaysForwardPage 来判断切换动画
-                // 判断当前是前进还是后退，添加不同的动画效果
-                // const pageTransitionName = isForward(to, from) ? slideLeft : slideRight
-                // =================== //
-                // 根据路由中的 meta.index 来判断切换动画
-                let pageTransitionName
-                if (!from.meta.index || to.meta.index === from.meta.index) {
-                    pageTransitionName = 'fade'
-                } else if (to.meta.index > from.meta.index) {
-                    pageTransitionName = slideLeft
-                } else {
-                    pageTransitionName = slideRight
-                }
-                store.commit(`appShell/setPageTransitionName`, { pageTransitionName })
+        const appShellStore = useAppShellStore()
+        const { needPageTransition } = $(storeToRefs(appShellStore))
+        // 如果不需要切换动画，直接返回
+        if (needPageTransition) {
+            // 根据 alwaysBackPage, alwaysForwardPage 来判断切换动画
+            // 判断当前是前进还是后退，添加不同的动画效果
+            // const pageTransitionName = isForward(to, from) ? slideLeft : slideRight
+            // =================== //
+            // 根据路由中的 meta.index 来判断切换动画
+            let pageTransitionName
+            if (!from.meta.index || to.meta.index === from.meta.index) {
+                pageTransitionName = 'fade'
+            } else if (to.meta.index > from.meta.index) {
+                pageTransitionName = slideLeft
+            } else {
+                pageTransitionName = slideRight
             }
+            appShellStore.setPageTransitionName({ pageTransitionName })
         }
         next()
+    })
+
+    router.beforeResolve(async (to, from) => {
+        let diffed = false
+        const activated = to.matched.filter((c, i) => {
+            return diffed || (diffed = from.matched[i] !== c)
+        })
+
+        if (!activated.length) return false
+
+        await Promise.all(
+            activated.map(c => {
+                if (c.components.default.asyncData) {
+                    return c.components.default.asyncData({ store, route: to }, 2)
+                }
+                return true
+            })
+        )
     })
 
     return router
