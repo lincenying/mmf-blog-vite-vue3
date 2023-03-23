@@ -10,34 +10,36 @@
             <div v-for="item in lists.data" :key="item._id" class="list-section">
                 <div class="list-username" :class="item.is_delete ? 'text-red-500 line-through' : ''">{{ item.username }}</div>
                 <div class="list-email">{{ item.email }}</div>
-                <div class="list-date">{{ $f.timeYmd(item.update_date) }}</div>
+                <div class="list-date">{{ ctx.$f.timeYmd(item.update_date) }}</div>
                 <div class="list-action">
-                    <router-link :to="'/backend/user/modify/' + item._id" class="badge badge-success">编辑</router-link>
-                    <a v-if="item.is_delete" @click="handleRecover(item._id)" href="javascript:;">恢复</a>
-                    <a v-else @click="handleDelete(item._id)" href="javascript:;">删除</a>
+                    <router-link :to="`/backend/user/modify/${item._id}`" class="badge badge-success">编辑</router-link>
+                    <a v-if="item.is_delete" href="javascript:;" @click="handleRecover(item._id)">恢复</a>
+                    <a v-else href="javascript:;" @click="handleDelete(item._id)">删除</a>
                 </div>
             </div>
         </div>
         <div v-if="lists.hasNext" class="settings-footer">
-            <a v-if="!loading" @click="loadMore()" class="admin-load-more" href="javascript:;">加载更多</a>
+            <a v-if="!loading" class="admin-load-more" href="javascript:;" @click="loadMore()">加载更多</a>
             <a v-else class="admin-load-more" href="javascript:;">加载中...</a>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { asyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-user-list',
-    asyncData({ store, route, api }) {
+    asyncData(payload: asyncDataConfig) {
+        const { store, route, api } = payload
         const backendUserStore = useBackendUserStore(store)
         return backendUserStore.getUserList({ page: 1, path: route.path }, api)
     }
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('backend-user-list')
+const { ctx, route, appShellStore } = useGlobal()
 
 // pinia 状态管理 ===>
 const backendUserStore = useBackendUserStore()
@@ -55,14 +57,14 @@ const loadMore = async (page = lists.page + 1) => {
     await backendUserStore.getUserList({ page })
     toggleLoading(false)
 }
-const handleRecover = async id => {
+const handleRecover = async (id: string) => {
     const { code, message } = await api.get('backend/user/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         backendUserStore.recoverUser(id)
     }
 }
-const handleDelete = async id => {
+const handleDelete = async (id: string) => {
     const { code, message } = await api.get('backend/user/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
@@ -74,7 +76,7 @@ onMounted(() => {
     if (lists.path === '') {
         loadMore(1)
     } else {
-        const scrollTop = historyPageScrollTop[route.path] || 0
+        const scrollTop = (historyPageScrollTop as any)[route.path] || 0
         window.scrollTo(0, scrollTop)
     }
 })

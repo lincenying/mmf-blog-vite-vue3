@@ -1,8 +1,8 @@
 <template>
-    <div v-show="scrollTop > 500" class="back-top"><a @click="handleBackTop" href="javascript:;"></a></div>
+    <div v-show="scrollTop > 500" class="back-top"><a href="javascript:;" @click="handleBackTop"></a></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineOptions({
     name: 'back-top'
 })

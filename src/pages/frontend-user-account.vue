@@ -8,19 +8,19 @@
                         <span class="input-info error">请输入昵称</span>
                     </a-input>
                     <a-input title="邮箱">
-                        <input type="text" v-model="email" placeholder="邮箱" class="base-input" name="email" />
+                        <input v-model="email" type="text" placeholder="邮箱" class="base-input" name="email" />
                         <span class="input-info error">请输入邮箱</span>
                     </a-input>
                 </form>
             </div>
             <div class="settings-footer">
-                <a @click="handleSubmit" href="javascript:;" class="btn btn-yellow">保存设置</a>
+                <a href="javascript:;" class="btn btn-yellow" @click="handleSubmit">保存设置</a>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import api from '@/api/index-client'
 
 defineOptions({
@@ -28,7 +28,7 @@ defineOptions({
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('frontend-user-account')
+const { globalStore } = useGlobal()
 
 // pinia 状态管理 ===>
 const { cookies } = $(storeToRefs(globalStore))
@@ -37,7 +37,7 @@ let username = $ref('')
 let email = $ref('')
 
 const getUser = async () => {
-    const { code, data } = await api.get('frontend/user/account')
+    const { code, data } = await api.get('frontend/user/account', {})
     if (code === 200) {
         username = data.username
         email = data.email

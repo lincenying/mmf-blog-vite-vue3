@@ -9,15 +9,16 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+const prop = defineProps<{
+    title: string
+    classes?: string
+}>()
+
 defineOptions({
     name: 'a-input'
 })
 
-const prop = defineProps({
-    title: String,
-    classes: String
-})
 // eslint-disable-next-line no-unused-vars
 const { title, classes } = $(toRefs(prop))
 </script>

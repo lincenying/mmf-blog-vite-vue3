@@ -7,7 +7,7 @@
             <div class="comment-items-wrap">
                 <div v-for="item in lists.data" :key="item._id" class="comment-item">
                     <a href="javascript:;" class="comment-author-avatar-link">
-                        <img :src="$f.avatar(item.email)" alt="" class="avatar-img" />
+                        <img :src="ctx.$f.avatar(item.email)" alt="" class="avatar-img" />
                     </a>
                     <div class="comment-content-wrap">
                         <span class="comment-author-wrap">
@@ -15,36 +15,38 @@
                         </span>
                         <div class="comment-content">{{ item.content }}</div>
                         <div class="comment-footer">
-                            <span class="comment-time">{{ $f.timeAgo(item.timestamp) }}</span>
-                            <a v-if="item.is_delete" @click="handleRecover(item._id)" href="javascript:;" class="comment-action-item comment-reply"
+                            <span class="comment-time">{{ ctx.$f.timeAgo(item.timestamp) }}</span>
+                            <a v-if="item.is_delete" href="javascript:;" class="comment-action-item comment-reply" @click="handleRecover(item._id)"
                                 >恢复</a
                             >
-                            <a v-else @click="handleDelete(item._id)" href="javascript:;" class="comment-action-item comment-reply">删除</a>
+                            <a v-else href="javascript:;" class="comment-action-item comment-reply" @click="handleDelete(item._id)">删除</a>
                         </div>
                     </div>
                 </div>
             </div>
             <div v-if="lists.hasNext" class="load-more-wrap">
-                <a v-if="!loading" @click="loadMore()" href="javascript:;" class="comments-load-more">加载更多</a>
+                <a v-if="!loading" href="javascript:;" class="comments-load-more" @click="loadMore()">加载更多</a>
                 <a v-else href="javascript:;" class="comments-load-more">加载中...</a>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { asyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-article-comment',
-    asyncData({ store, route, api }) {
+    asyncData(payload: asyncDataConfig) {
+        const { store, route, api } = payload
         const globalCommentStore = useGlobalCommentStore(store)
         return globalCommentStore.getCommentList({ page: 1, path: route.path, all: 1, id: route.params.id }, api)
     }
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('backend-article-comment')
+const { ctx, route } = useGlobal()
 
 // pinia 状态管理 ===>
 const globalCommentStore = useGlobalCommentStore()
@@ -58,14 +60,14 @@ const loadMore = async (page = lists.page + 1) => {
     await globalCommentStore.getCommentList({ page, path: route.path, all: 1, id: route.params.id }, api)
     toggleLoading(false)
 }
-const handleRecover = async id => {
+const handleRecover = async (id: string) => {
     const { code, message } = await api.get('frontend/comment/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         globalCommentStore.recoverComment(id)
     }
 }
-const handleDelete = async id => {
+const handleDelete = async (id: string) => {
     const { code, message } = await api.get('frontend/comment/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })

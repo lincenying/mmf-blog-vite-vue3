@@ -1,34 +1,37 @@
 import { acceptHMRUpdate } from 'pinia'
 
+import type { ApiConfig, Comment, CommentStore } from '@/types'
+
 import api from '@/api/index-client'
 
-const useStore = defineStore('backendAdminStore', {
-    state: () => ({
+const useStore = defineStore('globalCommentStore', {
+    state: (): CommentStore => ({
         lists: {
-            hasNext: false,
-            hasPrev: false,
-            path: '',
+            data: [],
+            hasNext: 0,
+            hasPrev: 0,
             page: 1,
-            data: []
-        },
-        item: {
-            data: {},
             path: ''
         }
     }),
     getters: {
-        getBackendAdminStore: state => state
+        getGlobalCommentStore: state => state
     },
     actions: {
-        async getAdminList(config, $api) {
+        async getCommentList(config: ApiConfig, $api?: any) {
             if (!import.meta.env.SSR) $api = api
-            if (this.lists.data.length > 0 && config.path === this.lists.path && config.page === 1) return
-            const { code, data } = await $api.get('backend/admin/list', { ...config, cache: true })
+            if (config.path === this.lists.path && config.page === 1) return
+            const { code, data } = await $api.get('frontend/comment/list', { ...config, path: undefined, cache: true })
             if (data && code === 200) {
-                const { list, path, hasNext, hasPrev, page } = {
-                    ...data,
-                    path: config.path,
-                    page: config.page
+                const {
+                    list = [],
+                    path = '',
+                    hasNext = 0,
+                    hasPrev = 0,
+                    page = 1
+                } = {
+                    ...config,
+                    ...data
                 }
 
                 let _list
@@ -38,34 +41,19 @@ const useStore = defineStore('backendAdminStore', {
                 } else {
                     _list = this.lists.data.concat(list)
                 }
-
                 this.lists = {
                     data: _list,
                     hasNext,
                     hasPrev,
-                    page: page + 1,
+                    page,
                     path
                 }
             }
         },
-        async getAdminItem(config, $api) {
-            if (!import.meta.env.SSR) $api = api
-            const { code, data } = await $api.get('backend/admin/item', config)
-            if (data && code === 200) {
-                this.item = {
-                    data,
-                    ...config
-                }
-            }
+        insertCommentItem(payload: Comment) {
+            this.lists.data = [payload].concat(this.lists.data)
         },
-        updateAdminItem(payload) {
-            this.item.data = payload
-            const index = this.lists.data.findIndex(ii => ii._id === payload._id)
-            if (index > -1) {
-                this.lists.data.splice(index, 1, payload)
-            }
-        },
-        deleteAdmin(id) {
+        deleteComment(id: string) {
             const index = this.lists.data.findIndex(ii => ii._id === id)
             if (index > -1) {
                 this.lists.data.splice(index, 1, {
@@ -74,7 +62,7 @@ const useStore = defineStore('backendAdminStore', {
                 })
             }
         },
-        recoverAdmin(id) {
+        recoverComment(id: string) {
             const index = this.lists.data.findIndex(ii => ii._id === id)
             if (index > -1) {
                 this.lists.data.splice(index, 1, {

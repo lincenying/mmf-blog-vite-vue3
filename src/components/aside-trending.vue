@@ -13,13 +13,16 @@
         </div>
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
+import type { Article } from '@/types'
+
+const prop = defineProps<{
+    trending: Article[]
+}>()
+
 defineOptions({
     name: 'aside-trending'
 })
 
-const prop = defineProps({
-    trending: Array
-})
 const { trending } = $(toRefs(prop))
 </script>

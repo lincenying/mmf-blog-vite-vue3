@@ -10,37 +10,39 @@
             <div v-for="item in lists.data" :key="item._id" class="list-section">
                 <div class="list-title" :class="item.is_delete ? 'text-red-500 line-through' : ''">{{ item.title }}</div>
                 <div class="list-category">{{ item.category_name }}</div>
-                <div class="list-date">{{ $f.timeAgo(item.update_date) }}</div>
+                <div class="list-date">{{ ctx.$f.timeAgo(item.update_date) }}</div>
                 <div class="list-action">
-                    <router-link :to="'/backend/article/modify/' + item._id" class="badge badge-success">编辑</router-link>
-                    <a v-if="item.is_delete" @click="handleRecover(item._id)" href="javascript:;">恢复</a>
-                    <a v-else @click="handleDelete(item._id)" href="javascript:;">删除</a>
-                    <router-link v-if="item.comment_count > 0" :to="'/backend/article/comment/' + item._id" class="badge badge-success"
+                    <router-link :to="`/backend/article/modify/${item._id}`" class="badge badge-success">编辑</router-link>
+                    <a v-if="item.is_delete" href="javascript:;" @click="handleRecover(item._id)">恢复</a>
+                    <a v-else href="javascript:;" @click="handleDelete(item._id)">删除</a>
+                    <router-link v-if="item.comment_count > 0" :to="`/backend/article/comment/${item._id}`" class="badge badge-success"
                         >评论</router-link
                     >
                 </div>
             </div>
         </div>
         <div v-if="lists.hasNext" class="settings-footer">
-            <a v-if="!loading" @click="loadMore()" class="admin-load-more" href="javascript:;">加载更多</a>
+            <a v-if="!loading" class="admin-load-more" href="javascript:;" @click="loadMore()">加载更多</a>
             <a v-else class="admin-load-more" href="javascript:;">加载中...</a>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { asyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-article-list',
-    asyncData({ store, route, api }) {
+    asyncData(payload: asyncDataConfig) {
+        const { store, route, api } = payload
         const backendArticleStore = useBackendArticleStore(store)
         return backendArticleStore.getArticleList({ page: 1, path: route.path }, api)
     }
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('backend-admin-list')
+const { ctx, route, appShellStore } = useGlobal()
 
 // pinia 状态管理 ===>
 const backendArticleStore = useBackendArticleStore()
@@ -58,18 +60,18 @@ const loadMore = async (page = lists.page + 1) => {
     await backendArticleStore.getArticleList({ page, path: route.path })
     toggleLoading(false)
 }
-const handleRecover = async id => {
+const handleRecover = async (id: string) => {
     const { code, message } = await api.get('backend/article/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
-        backendArticleStore.recoverArticle({ id })
+        backendArticleStore.recoverArticle(id)
     }
 }
-const handleDelete = async id => {
+const handleDelete = async (id: string) => {
     const { code, message } = await api.get('backend/article/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
-        backendArticleStore.deleteArticle({ id })
+        backendArticleStore.deleteArticle(id)
     }
 }
 
@@ -77,7 +79,7 @@ onMounted(() => {
     if (lists.path === '') {
         loadMore(1)
     } else {
-        const scrollTop = historyPageScrollTop[route.path] || 0
+        const scrollTop = (historyPageScrollTop as any)[route.path] || 0
         window.scrollTo(0, scrollTop)
     }
 })

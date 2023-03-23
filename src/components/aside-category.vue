@@ -10,13 +10,16 @@
         </router-link>
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
+import type { Category } from '@/types'
+
+const prop = defineProps<{
+    category: Category[]
+}>()
+
 defineOptions({
     name: 'aside-category'
 })
 
-const prop = defineProps({
-    category: Array
-})
 const { category } = $(toRefs(prop))
 </script>

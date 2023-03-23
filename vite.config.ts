@@ -1,10 +1,12 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { loadEnv } from 'vite'
+import { loadEnv, defineConfig } from 'vite'
 
 import vuePlugin from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+
+import { viteMockServe } from 'vite-plugin-mock'
 
 import UnoCSS from 'unocss/vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -16,6 +18,8 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 import { VitePWA } from 'vite-plugin-pwa'
 
+import apiDomain from './src/api/url'
+
 export const ssrTransformCustomDir = () => {
     return {
         props: [],
@@ -24,10 +28,13 @@ export const ssrTransformCustomDir = () => {
 }
 
 // https://vitejs.dev/config/
-export default ({ mode }) => {
+export default defineConfig(({ mode, command }) => {
     const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
+
+    const localMock = true
+    const prodMock = false
 
     const config = {
         server: {
@@ -37,7 +44,7 @@ export default ({ mode }) => {
             disableHostCheck: true,
             proxy: {
                 '/api': {
-                    target: 'https://api.mmxiaowu.com',
+                    target: apiDomain,
                     changeOrigin: true,
                     pathRewrite: {
                         '^/api': '/api'
@@ -46,11 +53,7 @@ export default ({ mode }) => {
             }
         },
         css: {
-            preprocessorOptions: {
-                less: {
-                    javascriptEnabled: true
-                }
-            }
+            preprocessorOptions: {}
         },
         plugins: [
             createHtmlPlugin({
@@ -69,15 +72,22 @@ export default ({ mode }) => {
                     vue: vuePlugin({
                         template: {
                             compilerOptions: {
-                                isCustomElement: tag => ['def'].includes(tag)
-                            },
-                            directiveTransforms: {
-                                loading: ssrTransformCustomDir
+                                isCustomElement: (tag: string) => ['def'].includes(tag)
                             }
                         }
                     }),
                     vueJsx: vueJsx()
                 }
+            }),
+            viteMockServe({
+                mockPath: 'mock',
+                localEnabled: command === 'serve' && localMock,
+                prodEnabled: command !== 'serve' && prodMock,
+                injectCode: `
+                  import { setupProdMockServer } from './mockProdServer';
+                  setupProdMockServer();
+                `,
+                logger: true
             }),
             AutoImport({
                 eslintrc: {
@@ -97,13 +107,14 @@ export default ({ mode }) => {
                     {
                         pinia: ['defineStore', 'storeToRefs'],
                         'vue-router': ['createRouter', 'createWebHashHistory'],
-                        '@/utils': ['UTC2Date', 'deepClone', 'showMsg']
+                        '@/utils': ['deepClone', 'deepMerge', '$is', 'showMsg']
                     }
                 ],
                 dts: 'src/auto-imports.d.ts',
-                dirs: ['src/components', 'src/pinia', 'src/mixins'],
+                dirs: ['src/components', 'src/composables', 'src/pinia'],
 
                 resolvers: [ElementPlusResolver()],
+                defaultExportByFilename: false,
                 vueTemplate: true,
                 cache: false
             }),
@@ -114,6 +125,7 @@ export default ({ mode }) => {
                     /\.vue\?vue/, // .vue
                     /\.md$/ // .md
                 ],
+                extensions: ['vue', 'tsx', 'jsx'],
                 resolvers: [ElementPlusResolver()],
                 dts: 'src/components.d.ts'
             }),
@@ -125,14 +137,16 @@ export default ({ mode }) => {
                 base: '/',
                 registerType: 'autoUpdate',
                 workbox: {
-                    globPatterns: ['**/*.{js,css}'],
                     cacheId: 'mmf-blog-vite-vue3',
+                    globPatterns: ['**/*.{js,css}'],
+                    navigateFallback: null,
                     runtimeCaching: [
                         {
-                            urlPattern: /api/,
-                            handler: 'NetworkFirst',
+                            urlPattern: /api\/.*/i,
+                            handler: 'CacheFirst',
+                            method: 'GET',
                             options: {
-                                networkTimeoutSeconds: 1,
+                                // networkTimeoutSeconds: 1,
                                 cacheName: 'api-cache',
                                 cacheableResponse: {
                                     statuses: [0, 200]
@@ -140,10 +154,11 @@ export default ({ mode }) => {
                             }
                         },
                         {
-                            urlPattern: /^https:\/\/cdn\.jsdelivr\.net/,
-                            handler: 'NetworkFirst',
+                            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
+                            handler: 'CacheFirst',
+                            method: 'GET',
                             options: {
-                                networkTimeoutSeconds: 1,
+                                // networkTimeoutSeconds: 1,
                                 cacheName: 'cdn-cache',
                                 cacheableResponse: {
                                     statuses: [0, 200]
@@ -207,4 +222,4 @@ export default ({ mode }) => {
         }
     }
     return config
-}
+})

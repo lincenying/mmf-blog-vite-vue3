@@ -2,19 +2,19 @@
     <div class="settings-main card">
         <div class="settings-main-content">
             <a-input title="分类名称">
-                <input type="text" v-model="form.cate_name" placeholder="分类名称" class="base-input" name="cate_name" />
+                <input v-model="form.cate_name" type="text" placeholder="分类名称" class="base-input" name="cate_name" />
                 <span class="input-info error">请输入分类名称</span>
             </a-input>
             <a-input title="分类排序">
-                <input type="text" v-model="form.cate_order" placeholder="分类排序" class="base-input" name="cate_order" />
+                <input v-model="form.cate_order" type="text" placeholder="分类排序" class="base-input" name="cate_order" />
                 <span class="input-info error">请输入分类排序</span>
             </a-input>
         </div>
-        <div class="settings-footer"><a @click="handleInsert" href="javascript:;" class="btn btn-yellow">添加分类</a></div>
+        <div class="settings-footer"><a href="javascript:;" class="btn btn-yellow" @click="handleInsert">添加分类</a></div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import api from '@/api/index-client'
 
 defineOptions({
@@ -22,7 +22,7 @@ defineOptions({
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('backend-category-insert')
+const { router } = useGlobal()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()
@@ -36,8 +36,10 @@ const form = reactive({
 })
 
 watch(item, val => {
-    form.cate_name = val.data.cate_name
-    form.cate_order = val.data.cate_order
+    if (val.data) {
+        form.cate_name = val.data.cate_name
+        form.cate_order = val.data.cate_order
+    }
 })
 
 onMounted(() => {

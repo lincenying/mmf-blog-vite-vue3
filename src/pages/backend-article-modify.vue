@@ -2,14 +2,14 @@
     <div class="settings-main card">
         <div class="settings-main-content">
             <a-input title="标题">
-                <input type="text" v-model="form.title" placeholder="标题" class="base-input" name="title" />
+                <input v-model="form.title" type="text" placeholder="标题" class="base-input" name="title" />
                 <span class="input-info error">请输入标题</span>
             </a-input>
             <a-input title="分类" :classes="'select-item-wrap'">
                 <i class="icon icon-arrow-down"></i>
                 <select v-model="form.category" class="select-item" name="category">
                     <option value="">请选择分类</option>
-                    <option v-for="item in lists" :key="item._id" :value="item._id">{{ item.cate_name }}</option>
+                    <option v-for="val in lists" :key="val._id" :value="val._id">{{ val.cate_name }}</option>
                 </select>
                 <span class="input-info error">请输入分类</span>
             </a-input>
@@ -18,36 +18,38 @@
                     <client-only>
                         <v-md-editor
                             v-model="form.content"
-                            @upload-image="handleUploadImage"
                             :disabled-menus="[]"
                             mode="edit"
                             height="500px"
+                            @upload-image="handleUploadImage"
                         ></v-md-editor>
                     </client-only>
                 </div>
             </div>
         </div>
         <div class="settings-footer">
-            <a @click="handleModify" href="javascript:;" class="btn btn-yellow">编辑文章</a>
+            <a href="javascript:;" class="btn btn-yellow" @click="handleModify">编辑文章</a>
             <router-link to="/backend/article/list" class="btn btn-blue">返回</router-link>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { asyncDataConfig, Fn } from '@/types'
 import api from '@/api/index-client'
 import { uploadApi } from '@/api/upload-api'
 
 defineOptions({
     name: 'backend-article-modify',
-    asyncData({ store, route, api }) {
+    asyncData(payload: asyncDataConfig) {
+        const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
         return globalCategoryStore.getCategoryList({ limit: 99, path: route.path }, api)
     }
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('backend-article-modify')
+const { ctx, route, router } = useGlobal()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()
@@ -79,10 +81,12 @@ watch(
 watch(
     () => item,
     val => {
-        form.title = val.data.title
-        form.category_old = val.data.category
-        form.category = val.data.category
-        form.content = val.data.content
+        if (val.data) {
+            form.title = val.data.title
+            form.category_old = val.data.category
+            form.category = val.data.category
+            form.content = val.data.content
+        }
     },
     {
         deep: true
@@ -110,18 +114,22 @@ const handleModify = async () => {
     }
 }
 
-const handleUploadImage = async (event, insertImage, files) => {
+const handleUploadImage = async (event: EventTarget, insertImage: Fn, files: FileList) => {
+    const loader = ctx.$loading.show()
+
     const formData = new FormData()
-    formData.append('file', files)
-    const { data } = await api.file(uploadApi + '/ajax.php?action=upload', formData)
+    formData.append('file', files[0])
+    const { data } = await api.file(`${uploadApi}/ajax.php?action=upload`, formData)
     if (data && data.filepath) {
         insertImage({
-            url: uploadApi + '/' + data.filepath,
+            url: `${uploadApi}/${data.filepath}`,
             desc: ''
             // width: 'auto',
             // height: 'auto',
         })
     }
+
+    loader.hide()
 }
 
 const headTitle = computed(() => {

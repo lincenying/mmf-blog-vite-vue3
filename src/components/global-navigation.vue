@@ -23,16 +23,16 @@
             <div v-if="!isBackend" class="right-part">
                 <span class="nav-search">
                     <i class="icon icon-search-white"></i>
-                    <input @keyup.enter="onSearch($event)" placeholder="记得按回车哦" class="nav-search-input" />
+                    <input placeholder="记得按回车哦" class="nav-search-input" @keyup.enter="onSearch($event)" />
                 </span>
                 <span v-if="isLogin" class="nav-me">
                     <router-link to="/user/account" class="nav-me-link">
-                        <img :src="$f.avatar(cookies.useremail, 100)" class="nav-avatar-img" />
+                        <img :src="ctx.$f.avatar(cookies.useremail, 100)" class="nav-avatar-img" />
                     </router-link>
                 </span>
                 <span v-else class="nav-me">
-                    <a @click="handleLogin" href="javascript:;" class="nav-me-link">
-                        <img :src="$f.avatar('noavatar')" class="nav-avatar-img" />
+                    <a href="javascript:;" class="nav-me-link" @click="handleLogin">
+                        <img :src="ctx.$f.avatar('noavatar')" class="nav-avatar-img" />
                     </a>
                 </span>
             </div>
@@ -40,18 +40,19 @@
     </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
+const prop = defineProps<{
+    isBackend: boolean
+}>()
+
 defineOptions({
     name: 'global-navigation'
 })
 
-const prop = defineProps({
-    'is-backend': Boolean
-})
 const { isBackend } = $(toRefs(prop))
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('global-navigation')
+const { ctx, router, globalStore } = useGlobal()
 
 const { cookies } = $(storeToRefs(globalStore))
 
@@ -62,11 +63,11 @@ const isLogin = computed(() => {
 const handleLogin = () => {
     globalStore.setLoginModal(true)
 }
-const onSearch = e => {
+const onSearch = (e: any) => {
     var qs = e.target.value
     if (qs === '') {
         return false
     }
-    router.replace('/search/' + qs)
+    router.replace(`/search/${qs}`)
 }
 </script>

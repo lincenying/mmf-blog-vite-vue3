@@ -10,10 +10,10 @@
                 <div class="list-title" :class="item.is_delete ? 'text-red-500 line-through' : ''">{{ item.cate_name }}</div>
                 <div class="list-time">{{ item.cate_order }}</div>
                 <div class="list-action">
-                    <router-link :to="'/backend/category/modify/' + item._id" class="badge badge-success">编辑</router-link>
+                    <router-link :to="`/backend/category/modify/${item._id}`" class="badge badge-success">编辑</router-link>
                     <template v-if="!item.cate_num">
-                        <a v-if="item.is_delete" @click="handleRecover(item._id)" href="javascript:;">恢复</a>
-                        <a v-else @click="handleDelete(item._id)" href="javascript:;">删除</a>
+                        <a v-if="item.is_delete" href="javascript:;" @click="handleRecover(item._id)">恢复</a>
+                        <a v-else href="javascript:;" @click="handleDelete(item._id)">删除</a>
                     </template>
                 </div>
             </div>
@@ -21,19 +21,21 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { asyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-category-list',
-    asyncData({ store, route, api }) {
+    asyncData(payload: asyncDataConfig) {
+        const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
         return globalCategoryStore.getCategoryList({ limit: 99, path: route.path }, api)
     }
 })
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, options, route, router, globalStore, appShellStore, useLockFn } = useGlobal('backend-category-list')
+const { route, appShellStore } = useGlobal()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()
@@ -45,30 +47,30 @@ useSaveScroll()
 
 const [loading, toggleLoading] = useToggle(false)
 
-const loadMore = async () => {
+const loadMore = async (page: number) => {
     if (loading.value) return
     toggleLoading(true)
-    await globalCategoryStore.getCategoryList({ limit: 99, path: route.path }, api)
+    await globalCategoryStore.getCategoryList({ page, limit: 99, path: route.path }, api)
     toggleLoading(false)
 }
 
 onMounted(() => {
-    if (category.path === '') {
+    if (category.length === 0) {
         loadMore(1)
     } else {
-        const scrollTop = historyPageScrollTop[route.path] || 0
+        const scrollTop = (historyPageScrollTop as any)[route.path] || 0
         window.scrollTo(0, scrollTop)
     }
 })
 
-const handleRecover = async id => {
+const handleRecover = async (id: string) => {
     const { code, message } = await api.get('backend/category/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         globalCategoryStore.recoverCategory(id)
     }
 }
-const handleDelete = async id => {
+const handleDelete = async (id: string) => {
     const { code, message } = await api.get('backend/category/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
