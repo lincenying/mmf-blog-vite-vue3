@@ -13,6 +13,7 @@
             </form>
         </div>
         <div class="settings-footer"><a href="javascript:;" class="btn btn-yellow" @click="handleLogin">登录</a></div>
+        <client-only> </client-only>
     </div>
 </template>
 

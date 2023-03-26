@@ -1,18 +1,10 @@
 import { acceptHMRUpdate } from 'pinia'
-import cookies from 'js-cookie'
 import type { anyObject, GlobalStore } from '@/types'
-
-const objCookies = {
-    user: cookies.get('user'),
-    userid: cookies.get('userid'),
-    username: cookies.get('username'),
-    useremail: cookies.get('useremail')
-}
 
 const useStore = defineStore('globalStore', {
     state: (): GlobalStore => ({
         loading: false,
-        cookies: objCookies,
+        cookies: {},
         showLoginModal: false,
         showRegisterModal: false,
         ISDEV: import.meta.env.VITE_APP_ENV === 'development',

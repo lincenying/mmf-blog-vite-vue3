@@ -27,12 +27,12 @@
                 </span>
                 <span v-if="isLogin" class="nav-me">
                     <router-link to="/user/account" class="nav-me-link">
-                        <img :src="ctx.$f.avatar(cookies.useremail, 100)" class="nav-avatar-img" />
+                        <img :src="$f.Avatar(cookies.useremail, 100)" class="nav-avatar-img" />
                     </router-link>
                 </span>
                 <span v-else class="nav-me">
                     <a href="javascript:;" class="nav-me-link" @click="handleLogin">
-                        <img :src="ctx.$f.avatar('noavatar')" class="nav-avatar-img" />
+                        <img :src="$f.Avatar('noavatar')" class="nav-avatar-img" />
                     </a>
                 </span>
             </div>
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-const prop = defineProps<{
+const props = defineProps<{
     isBackend: boolean
 }>()
 
@@ -49,10 +49,12 @@ defineOptions({
     name: 'global-navigation'
 })
 
-const { isBackend } = $(toRefs(prop))
+const $f = useFilters()
+
+const { isBackend } = $(toRefs(props))
 
 // eslint-disable-next-line no-unused-vars
-const { ctx, router, globalStore } = useGlobal()
+const { router, globalStore } = useGlobal()
 
 const { cookies } = $(storeToRefs(globalStore))
 

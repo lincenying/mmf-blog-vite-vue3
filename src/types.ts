@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
+
+import type { AxiosInstance } from 'axios'
 import type { Pinia } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
 
 declare type Nullable<T> = T | null
-// eslint-disable-next-line no-unused-vars
 declare type NonNullable<T> = T extends null | undefined ? never : T
 
 export interface anyObject {
@@ -13,18 +15,17 @@ export interface anyArray {
     [index: number]: any
 }
 
-// eslint-disable-next-line no-unused-vars
 export type Fn = (...args: any[]) => void
 
 export interface ApiConfig {
+    all?: number
+    by?: string | string[]
+    from?: string
+    id?: string | string[]
+    limit?: number
     page?: number
     path?: string
-    from?: string
     key?: string | string[]
-    by?: string | string[]
-    limit?: number
-    all?: number
-    id?: string | string[]
 }
 
 export interface Article {
@@ -160,7 +161,7 @@ export interface CategoryStore {
     }
 }
 
-interface CommentStoreList extends ListConfig {
+export interface CommentStoreList extends ListConfig {
     data: Comment[]
 }
 export interface CommentStore {
@@ -172,6 +173,7 @@ export interface UserCookies {
     userid?: string
     username?: string
     useremail?: string
+    [propName: string]: any
 }
 
 export interface GlobalStore {
@@ -189,4 +191,18 @@ export interface ShellStore {
     isPageSwitching: boolean
     pageTransitionName: string
     historyPageScrollTop: anyObject
+}
+
+export interface ApiClientReturn {
+    get(url: string, params: anyObject, headers?: anyObject): Promise<any>
+    post(url: string, data: anyObject, headers?: anyObject): Promise<any>
+    file(url: string, data: anyObject, headers?: anyObject): Promise<any>
+}
+
+export interface ApiServerReturn {
+    post(url: string, data: anyObject, headers?: anyObject): Promise<any>
+    get(url: string, params: anyObject, headers?: anyObject): Promise<any>
+    cookies: UserCookies
+    api: AxiosInstance
+    getCookies: () => UserCookies
 }

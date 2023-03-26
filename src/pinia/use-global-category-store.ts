@@ -1,6 +1,6 @@
 import { acceptHMRUpdate } from 'pinia'
 
-import type { CategoryStore, ApiConfig, Category } from '@/types'
+import type { CategoryStore, ApiConfig, Category, ApiClientReturn, ApiServerReturn } from '@/types'
 import api from '@/api/index-client'
 
 const useStore = defineStore('globalCategoryStore', {
@@ -14,17 +14,17 @@ const useStore = defineStore('globalCategoryStore', {
         getGlobalCategoryStore: state => state
     },
     actions: {
-        async getCategoryList(config: ApiConfig, $api?: any) {
+        async getCategoryList(config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) {
             if (!import.meta.env.SSR) $api = api
             if (this.lists.length) return
-            const { code, data } = await $api.get('backend/category/list', { ...config, path: undefined, cache: true })
+            const { code, data } = await $api!.get('backend/category/list', { ...config, path: undefined, cache: true })
             if (data && code === 200) {
                 this.lists = data.list
             }
         },
-        async getCategoryItem(config: ApiConfig, $api?: any) {
+        async getCategoryItem(config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) {
             if (!import.meta.env.SSR) $api = api
-            const { code, data } = await $api.get('backend/category/item', { ...config, path: undefined })
+            const { code, data } = await $api!.get('backend/category/item', { ...config, path: undefined })
             if (data && code === 200) {
                 this.item = {
                     data,
