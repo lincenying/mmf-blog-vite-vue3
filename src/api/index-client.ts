@@ -3,9 +3,7 @@ import qs from 'qs'
 
 import type { AxiosResponse } from 'axios'
 import config from './config-client'
-import type { anyObject, ApiClientReturn } from '@/types'
-
-import { showMsg } from '@/utils'
+import type { ApiClientReturn } from '@/types'
 
 axios.interceptors.request.use(
     config => {
@@ -45,8 +43,20 @@ function checkCode(res: any) {
     return res && res.data
 }
 
-const _api = (): ApiClientReturn => ({
-    async file(url: string, data: anyObject) {
+type API = () => ApiClientReturn
+
+/**
+ * axios Api 封装
+ * @returns ApiClientReturn
+ * @example
+ * ```
+ * get(url: '/api/url', params: {}, headers: {})
+ * post(url: '/api/url', data: {}, headers: {})
+ * file(url: '/api/url', data: {}, headers: {})
+ * ```
+ */
+const _api: API = () => ({
+    async file(url, data) {
         const response = await axios({
             method: 'post',
             url,
@@ -58,7 +68,7 @@ const _api = (): ApiClientReturn => ({
         const res = checkStatus(response)
         return checkCode(res)
     },
-    async post(url: string, data: anyObject) {
+    async post(url, data) {
         const response = await axios({
             method: 'post',
             url: config.api + url,
@@ -72,7 +82,7 @@ const _api = (): ApiClientReturn => ({
         const res = checkStatus(response)
         return checkCode(res)
     },
-    async get(url: string, params: anyObject) {
+    async get(url, params) {
         const response = await axios({
             method: 'get',
             url: config.api + url,

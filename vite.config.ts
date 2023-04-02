@@ -11,7 +11,7 @@ import { viteMockServe } from 'vite-plugin-mock'
 import UnoCSS from 'unocss/vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 
-import VueMacros from 'unplugin-vue-macros/vite'
+import VueMacros from 'unplugin-vue-macros'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -67,7 +67,7 @@ export default defineConfig(({ mode, command }) => {
                     }
                 }
             }),
-            VueMacros({
+            VueMacros.vite({
                 plugins: {
                     vue: vuePlugin({
                         template: {

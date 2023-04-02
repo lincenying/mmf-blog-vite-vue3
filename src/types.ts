@@ -17,6 +17,21 @@ export interface anyArray {
 
 export type Fn = (...args: any[]) => void
 
+/**
+ * 请求参数合集
+ * ```
+ * {
+        all?: number
+        by?: string | string[]
+        from?: string
+        id?: string | string[]
+        limit?: number
+        page?: number
+        path?: string
+        key?: string | string[]
+    }
+ * ```
+ */
 export interface ApiConfig {
     all?: number
     by?: string | string[]
@@ -28,6 +43,9 @@ export interface ApiConfig {
     key?: string | string[]
 }
 
+/**
+ * 文章详情
+ */
 export interface Article {
     _id: string
     title: string
@@ -47,6 +65,9 @@ export interface Article {
     like_status?: boolean
 }
 
+/**
+ * 分类
+ */
 export interface Category {
     _id: string
     cate_name: string
@@ -58,10 +79,13 @@ export interface Category {
     timestamp?: number
 }
 
+/**
+ * 评论
+ */
 export interface Comment {
     _id: string
     article_id: string
-    userid: anyObject
+    userid: Record<string, any>
     content: string
     creat_date: string
     is_delete: number
@@ -69,6 +93,10 @@ export interface Comment {
     email?: string
     username?: string
 }
+
+/**
+ * 用户
+ */
 export interface User {
     _id: string
     username: string
@@ -80,14 +108,9 @@ export interface User {
     timestamp: number
     wx_avatar?: string
     wx_signature?: string
-    userid?: anyObject
+    userid?: Record<string, any>
 }
 
-export interface ItemConfig {
-    data: anyObject
-    path?: string
-    [propName: string]: any
-}
 export interface ArticleItemConfig {
     data: Article
     path?: string
@@ -190,18 +213,18 @@ export interface ShellStore {
     needPageTransition: boolean
     isPageSwitching: boolean
     pageTransitionName: string
-    historyPageScrollTop: anyObject
+    historyPageScrollTop: Record<string, number>
 }
 
 export interface ApiClientReturn {
-    get(url: string, params: anyObject, headers?: anyObject): Promise<any>
-    post(url: string, data: anyObject, headers?: anyObject): Promise<any>
-    file(url: string, data: anyObject, headers?: anyObject): Promise<any>
+    get(url: string, params: Record<string, any>, headers?: Record<string, any>): Promise<any>
+    post(url: string, data: Record<string, any>, headers?: Record<string, any>): Promise<any>
+    file(url: string, data: Record<string, any>, headers?: Record<string, any>): Promise<any>
 }
 
 export interface ApiServerReturn {
-    post(url: string, data: anyObject, headers?: anyObject): Promise<any>
-    get(url: string, params: anyObject, headers?: anyObject): Promise<any>
+    post(url: string, data: Record<string, any>, headers?: Record<string, any>): Promise<any>
+    get(url: string, params: Record<string, any>, headers?: Record<string, any>): Promise<any>
     cookies: UserCookies
     api: AxiosInstance
     getCookies: () => UserCookies

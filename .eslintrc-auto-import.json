@@ -126,6 +126,7 @@
     "useAsyncQueue": true,
     "useAsyncState": true,
     "useAttrs": true,
+    "useAvatar": true,
     "useBackendAdminStore": true,
     "useBackendArticleStore": true,
     "useBackendUserStore": true,
