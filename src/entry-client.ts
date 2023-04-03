@@ -20,7 +20,7 @@ import './assets/css/github-markdown.css'
 import './assets/scss/style.scss'
 
 VueMarkdownEditor.use(vuePressTheme, {
-    Prism
+    Prism,
 })
 
 const { app, router } = createApp()
@@ -28,8 +28,8 @@ const { app, router } = createApp()
 router.isReady().then(() => {
     app.use(LoadingPlugin, {
         'can-cancel': false,
-        loader: 'dots',
-        color: '#54d9e0'
+        'loader': 'dots',
+        'color': '#54d9e0',
     })
         .use(VueMarkdownEditor)
         .mount('#app')

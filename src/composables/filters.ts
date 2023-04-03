@@ -14,13 +14,13 @@ function timeAgo(time: any) {
         time = tmp / 1000
     }
     const between = Date.now() / 1000 - Number(time)
-    if (between < 60) {
+    if (between < 60)
         return '刚刚'
-    } else if (between < 3600) {
+    else if (between < 3600)
         return pluralize(parseInt(`${between / 60}`, 10), ' 分钟前')
-    } else if (between < 86400) {
+    else if (between < 86400)
         return pluralize(parseInt(`${between / 3600}`, 10), ' 小时前')
-    }
+
     return pluralize(parseInt(`${between / 86400}`, 10), ' 天前')
 }
 
@@ -53,5 +53,5 @@ export const useFilters = () => ({
     timeAgo,
     timeYmd,
     Avatar,
-    Sleep
+    Sleep,
 })
