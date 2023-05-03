@@ -41,11 +41,11 @@
 
 <script setup lang="ts">
 import { ContentLoader } from 'vue-content-loader'
-import type { asyncDataConfig } from '@/types'
+import type { AsyncDataConfig } from '@/types'
 
 defineOptions({
     name: 'frontend-article',
-    asyncData(payload: asyncDataConfig) {
+    asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const {
             path,
@@ -78,8 +78,9 @@ const { lists: comments } = $(storeToRefs(globalCommentStore))
 
 useSaveScroll()
 
-const addTarget = (content: string) => {
-    if (!content) return ''
+function addTarget(content: string) {
+    if (!content)
+        return ''
     return content.replace(/<a(.*?)href="http/g, '<a$1target="_blank" href="http')
 }
 

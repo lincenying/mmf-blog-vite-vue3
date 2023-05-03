@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { strLen } from 'lcy-utils'
+import { strLen } from '@lincy/utils'
 import api from '@/api/index-client'
 
 const props = defineProps<{
@@ -53,10 +53,10 @@ const form = reactive({
     re_password: '',
 })
 
-const handleClose = () => {
+function handleClose() {
     globalStore.setRegisterModal(false)
 }
-const handleLogin = () => {
+function handleLogin() {
     globalStore.setLoginModal(true)
     globalStore.setRegisterModal(false)
 }

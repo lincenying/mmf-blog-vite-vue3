@@ -1,12 +1,12 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { loadEnv, defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 import vuePlugin from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
-import { viteMockServe } from 'vite-plugin-mock'
+import { viteMockServe } from '@lincy/vite-plugin-mock'
 
 import UnoCSS from 'unocss/vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -20,10 +20,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 import apiDomain from './src/api/url'
 
-export const ssrTransformCustomDir = () => {
+export function ssrTransformCustomDir() {
     return {
         props: [],
-        needRuntime: true
+        needRuntime: true,
     }
 }
 
@@ -34,11 +34,10 @@ export default defineConfig(({ mode, command }) => {
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
     const localMock = true
-    const prodMock = false
 
     const config = {
         server: {
-            port: 17776,
+            port: 7777,
             host: '0.0.0.0',
             hot: true,
             disableHostCheck: true,
@@ -46,14 +45,16 @@ export default defineConfig(({ mode, command }) => {
                 '/api': {
                     target: apiDomain,
                     changeOrigin: true,
-                    pathRewrite: {
-                        '^/api': '/api'
-                    }
-                }
-            }
+                    rewrite: (path: string) => path.replace(/^\/api/, '/api'),
+                },
+            },
         },
         css: {
-            preprocessorOptions: {}
+            preprocessorOptions: {
+                less: {
+                    javascriptEnabled: true,
+                },
+            },
         },
         plugins: [
             createHtmlPlugin({
@@ -63,41 +64,36 @@ export default defineConfig(({ mode, command }) => {
                         VITE_APP_ENV: process.env.VITE_APP_ENV,
                         VITE_APP_API_DOMAIN: process.env.VITE_APP_API_DOMAIN,
                         VITE_APP_API: process.env.VITE_APP_API,
-                        MODE: mode
-                    }
-                }
+                        MODE: mode,
+                    },
+                },
             }),
             VueMacros.vite({
                 plugins: {
                     vue: vuePlugin({
                         template: {
                             compilerOptions: {
-                                isCustomElement: (tag: string) => ['def'].includes(tag)
-                            }
-                        }
+                                isCustomElement: tag => ['def'].includes(tag),
+                            },
+                        },
                     }),
-                    vueJsx: vueJsx()
-                }
+                    vueJsx: vueJsx(),
+                },
             }),
             viteMockServe({
                 mockPath: 'mock',
-                localEnabled: command === 'serve' && localMock,
-                prodEnabled: command !== 'serve' && prodMock,
-                injectCode: `
-                  import { setupProdMockServer } from './mockProdServer';
-                  setupProdMockServer();
-                `,
-                logger: true
+                enable: command === 'serve' && localMock,
+                logger: true,
             }),
             AutoImport({
                 eslintrc: {
-                    enabled: true
+                    enabled: true,
                 },
                 include: [
                     /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
                     /\.vue$/,
                     /\.vue\?vue/, // .vue
-                    /\.md$/ // .md
+                    /\.md$/, // .md
                 ],
                 imports: [
                     'vue',
@@ -105,10 +101,10 @@ export default defineConfig(({ mode, command }) => {
                     '@vueuse/core',
                     '@vueuse/head',
                     {
-                        pinia: ['defineStore', 'storeToRefs'],
+                        'pinia': ['defineStore', 'storeToRefs'],
                         'vue-router': ['createRouter', 'createWebHashHistory'],
-                        '@/utils': ['deepClone', 'deepMerge', '$is', 'showMsg']
-                    }
+                        '@/utils': ['showMsg'],
+                    },
                 ],
                 dts: 'src/auto-imports.d.ts',
                 dirs: ['src/components', 'src/composables', 'src/pinia'],
@@ -116,18 +112,18 @@ export default defineConfig(({ mode, command }) => {
                 resolvers: [ElementPlusResolver()],
                 defaultExportByFilename: false,
                 vueTemplate: true,
-                cache: false
+                cache: false,
             }),
             Components({
                 include: [
                     /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
                     /\.vue$/,
                     /\.vue\?vue/, // .vue
-                    /\.md$/ // .md
+                    /\.md$/, // .md
                 ],
                 extensions: ['vue', 'tsx', 'jsx'],
                 resolvers: [ElementPlusResolver()],
-                dts: 'src/components.d.ts'
+                dts: 'src/components.d.ts',
             }),
             UnoCSS({
                 /* options */
@@ -149,9 +145,9 @@ export default defineConfig(({ mode, command }) => {
                                 // networkTimeoutSeconds: 1,
                                 cacheName: 'api-cache',
                                 cacheableResponse: {
-                                    statuses: [0, 200]
-                                }
-                            }
+                                    statuses: [0, 200],
+                                },
+                            },
                         },
                         {
                             urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
@@ -161,11 +157,11 @@ export default defineConfig(({ mode, command }) => {
                                 // networkTimeoutSeconds: 1,
                                 cacheName: 'cdn-cache',
                                 cacheableResponse: {
-                                    statuses: [0, 200]
-                                }
-                            }
-                        }
-                    ]
+                                    statuses: [0, 200],
+                                },
+                            },
+                        },
+                    ],
                 },
                 manifest: {
                     name: 'M.M.F小屋',
@@ -176,50 +172,50 @@ export default defineConfig(({ mode, command }) => {
                         {
                             src: '/static/img/icons/android-chrome-48x48.png',
                             sizes: '48x48',
-                            type: 'image/png'
+                            type: 'image/png',
                         },
                         {
                             src: '/static/img/icons/android-chrome-72x72.png',
                             sizes: '72x72',
-                            type: 'image/png'
+                            type: 'image/png',
                         },
                         {
                             src: '/static/img/icons/android-chrome-96x96.png',
                             sizes: '96x96',
-                            type: 'image/png'
+                            type: 'image/png',
                         },
                         {
                             src: '/static/img/icons/msapplication-icon-144x144.png',
                             sizes: '144x144',
-                            type: 'image/png'
+                            type: 'image/png',
                         },
                         {
                             src: '/static/img/icons/android-chrome-168x168.png',
                             sizes: '168x168',
-                            type: 'image/png'
+                            type: 'image/png',
                         },
                         {
                             src: '/static/img/icons/android-chrome-192x192.png',
                             sizes: '192x192',
-                            type: 'image/png'
+                            type: 'image/png',
                         },
                         {
                             src: '/static/img/icons/android-chrome-512x512.png',
                             sizes: '512x512',
-                            type: 'image/png'
-                        }
+                            type: 'image/png',
+                        },
                     ],
                     start_url: '/',
                     display: 'standalone',
-                    lang: 'zh-CN'
-                }
-            })
+                    lang: 'zh-CN',
+                },
+            }),
         ],
         resolve: {
             alias: {
-                '@': path.join(__dirname, './src')
-            }
-        }
+                '@': path.join(__dirname, './src'),
+            },
+        },
     }
     return config
 })

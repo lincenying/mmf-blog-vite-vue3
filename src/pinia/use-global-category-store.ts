@@ -12,15 +12,18 @@ const useStore = defineStore('globalCategoryStore', () => {
     })
 
     const getCategoryList = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
-        if (!import.meta.env.SSR) $api = api
-        if (state.lists.length) return
-        const { code, data } = await $api!.get('backend/category/list', { ...config, path: undefined, cache: true })
+        if (!$api)
+            $api = api
+        if (state.lists.length)
+            return
+        const { code, data } = await $api.get<ResponseDataList<Category[]>>('backend/category/list', { ...config, path: undefined, cache: true })
         if (data && code === 200)
             state.lists = data.list
     }
     const getCategoryItem = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
-        if (!import.meta.env.SSR) $api = api
-        const { code, data } = await $api!.get('backend/category/item', { ...config, path: undefined })
+        if (!$api)
+            $api = api
+        const { code, data } = await $api.get<Category>('backend/category/item', { ...config, path: undefined })
         if (data && code === 200) {
             state.item = {
                 data,
@@ -69,4 +72,5 @@ const useStore = defineStore('globalCategoryStore', () => {
 
 export default useStore
 
-if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useStore as any, import.meta.hot))
+if (import.meta.hot)
+    import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot))

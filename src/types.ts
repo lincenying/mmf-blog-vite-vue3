@@ -1,15 +1,22 @@
 import type { AxiosInstance } from 'axios'
 import type { Pinia } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
-export interface anyObject {
-    [propName: string]: any
-}
 
-export interface anyArray {
-    [index: number]: any
+/**
+ * 服务端回传参数
+ * ```
+ * {
+ *    store: Pinia
+  *   route: RouteLocationNormalized
+ *    api: ApiServerReturn
+ * }
+ * ```
+ */
+export interface AsyncDataConfig {
+    store: Pinia
+    route: RouteLocationNormalized
+    api: ApiServerReturn
 }
-
-export type Fn = (...args: any[]) => void
 
 /**
  * 请求参数合集
@@ -38,6 +45,18 @@ export interface ApiConfig {
 }
 
 /**
+ * 上传返回数据
+ * ```
+ * {
+    filepath: string
+}
+ * ```
+ */
+export interface Upload {
+    filepath: string
+}
+
+/**
  * 文章详情
  */
 export interface Article {
@@ -60,7 +79,7 @@ export interface Article {
 }
 
 /**
- * 分类
+ * 分类详情
  */
 export interface Category {
     _id: string
@@ -74,7 +93,7 @@ export interface Category {
 }
 
 /**
- * 评论
+ * 评论详情
  */
 export interface Comment {
     _id: string
@@ -89,7 +108,7 @@ export interface Comment {
 }
 
 /**
- * 用户
+ * 用户详情
  */
 export interface User {
     _id: string
@@ -102,7 +121,7 @@ export interface User {
     timestamp: number
     wx_avatar?: string
     wx_signature?: string
-    userid?: Record<string, any>
+    userid?: Obj
 }
 
 export interface ArticleItemConfig {
@@ -111,23 +130,27 @@ export interface ArticleItemConfig {
     [propName: string]: any
 }
 
+/**
+ * 通用分页列表型数据
+ */
 export interface ListConfig {
-    hasNext?: number
-    hasPrev?: number
+    hasNext?: number | boolean
+    hasPrev?: number | boolean
     path?: string
     page: number
     [propName: string]: any
 }
 
-export interface asyncDataConfig {
-    store: Pinia
-    route: RouteLocationNormalized
-    api?: any
-}
-
+/**
+ * 管理员列表
+ */
 interface AdminStoreList extends ListConfig {
     data: User[]
 }
+
+/**
+ * 管理员 Pinia Store
+ */
 export interface AdminStore {
     lists: AdminStoreList
     item: {
@@ -137,9 +160,16 @@ export interface AdminStore {
     }
 }
 
+/**
+ * 文章列表
+ */
 interface ArticleStoreList extends ListConfig {
     data: Article[]
 }
+
+/**
+ * 后台文章 Pinia Store
+ */
 export interface ArticleStore {
     lists: ArticleStoreList
     item: {
@@ -149,19 +179,30 @@ export interface ArticleStore {
     }
 }
 
+/**
+ * 前台文章 Pinia Store
+ */
 export interface FArticleStore {
     lists: ArticleStoreList
     item: {
         data: Nullable<Article>
         path?: string
+        isLoad?: boolean
         [propName: string]: any
     }
     trending: Article[]
 }
 
+/**
+ * 用户分页列表
+ */
 interface UserStoreList extends ListConfig {
     data: User[]
 }
+
+/**
+ * 用户 Pinia Store
+ */
 export interface UserStore {
     lists: UserStoreList
     item: {
@@ -171,6 +212,9 @@ export interface UserStore {
     }
 }
 
+/**
+ * 分类 Pinia Store
+ */
 export interface CategoryStore {
     lists: Category[]
     item: {
@@ -178,13 +222,23 @@ export interface CategoryStore {
     }
 }
 
+/**
+ * 评论分页列表
+ */
 export interface CommentStoreList extends ListConfig {
     data: Comment[]
 }
+
+/**
+ * 评论 Pinia Store
+ */
 export interface CommentStore {
     lists: CommentStoreList
 }
 
+/**
+ * 用户 cookies
+ */
 export interface UserCookies {
     user?: string
     userid?: string
@@ -193,6 +247,9 @@ export interface UserCookies {
     [propName: string]: any
 }
 
+/**
+ * 通用数据 Pinia Store
+ */
 export interface GlobalStore {
     loading: boolean
     cookies: UserCookies
@@ -203,22 +260,31 @@ export interface GlobalStore {
     ISPROD: boolean
 }
 
+/**
+ * Sheel Pinia Store
+ */
 export interface ShellStore {
     needPageTransition: boolean
     isPageSwitching: boolean
     pageTransitionName: string
-    historyPageScrollTop: Record<string, number>
+    historyPageScrollTop: ObjT<number>
 }
 
+/**
+ * Api 浏览器端封装类型
+ */
 export interface ApiClientReturn {
-    get(url: string, params: Record<string, any>, headers?: Record<string, any>): Promise<any>
-    post(url: string, data: Record<string, any>, headers?: Record<string, any>): Promise<any>
-    file(url: string, data: Record<string, any>, headers?: Record<string, any>): Promise<any>
+    get<T>(url: string, params: Obj, headers?: Obj): Promise<ResponseData<T>>
+    post<T>(url: string, data: Obj, headers?: Obj): Promise<ResponseData<T>>
+    file<T>(url: string, data: Obj, headers?: Obj): Promise<ResponseData<T>>
 }
 
+/**
+ * Api Node端封装类型
+ */
 export interface ApiServerReturn {
-    post(url: string, data: Record<string, any>, headers?: Record<string, any>): Promise<any>
-    get(url: string, params: Record<string, any>, headers?: Record<string, any>): Promise<any>
+    post<T>(url: string, data: Obj, headers?: Obj): Promise<ResponseData<T>>
+    get<T>(url: string, params: Obj, headers?: Obj): Promise<ResponseData<T>>
     cookies: UserCookies
     api: AxiosInstance
     getCookies: () => UserCookies

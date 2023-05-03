@@ -67,7 +67,7 @@ const userEmail = computed(() => {
     return cookies.useremail
 })
 
-const handleLoadComment = async () => {
+async function handleLoadComment() {
     toggleLoading(true)
     await globalCommentStore.getCommentList({
         id: route.params.id,
@@ -85,7 +85,7 @@ const handlePostComment = useLockFn(async () => {
         showMsg('请输入评论内容!')
     }
     else {
-        const { code, data } = await api.post('frontend/comment/insert', form)
+        const { code, data } = await api.post<Comment>('frontend/comment/insert', form)
         if (code === 200) {
             form.content = ''
             showMsg({ type: 'success', content: '评论发布成功!' })
@@ -93,7 +93,7 @@ const handlePostComment = useLockFn(async () => {
         }
     }
 })
-const handleReply = (item: Comment) => {
+function handleReply(item: Comment) {
     form.content = `回复 @${item.userid?.username}: `
     const content: HTMLTextAreaElement = document.querySelector('#content')!
     content.focus()

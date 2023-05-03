@@ -35,13 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import type { Fn, asyncDataConfig } from '@/types'
+import type { AnyFn } from '@vueuse/core'
+import type { Article, AsyncDataConfig, Upload } from '@/types'
 import api from '@/api/index-client'
 import { uploadApi } from '@/api/upload-api'
 
 defineOptions({
     name: 'backend-article-modify',
-    asyncData(payload: asyncDataConfig) {
+    asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
         return globalCategoryStore.getCategoryList({ limit: 99, path: route.path }, api)
@@ -73,7 +74,8 @@ watch(
     () => form.category,
     (val) => {
         const obj = lists.find(item => item._id === val)
-        if (obj) form.category_name = obj.cate_name
+        if (obj)
+            form.category_name = obj.cate_name
     },
 )
 
@@ -96,15 +98,16 @@ onMounted(async () => {
     backendArticleStore.getArticleItem({ id: route.params.id })
 })
 
-const handleModify = async () => {
+async function handleModify() {
     if (!form.title || !form.category || !form.content) {
         showMsg('请将表单填写完整!')
         return
     }
-    if (loading.value) return
+    if (loading.value)
+        return
     toggleLoading(true)
     // form.html = this.$refs.md.d_render
-    const { code, data, message } = await api.post('backend/article/modify', form)
+    const { code, data, message } = await api.post<Article>('backend/article/modify', form)
     toggleLoading(false)
     if (code === 200) {
         showMsg({ type: 'success', content: message })
@@ -113,12 +116,12 @@ const handleModify = async () => {
     }
 }
 
-const handleUploadImage = async (event: EventTarget, insertImage: Fn, files: FileList) => {
+async function handleUploadImage(event: EventTarget, insertImage: AnyFn, files: FileList) {
     const loader = ctx.$loading.show()
 
     const formData = new FormData()
     formData.append('file', files[0])
-    const { data } = await api.file(`${uploadApi}/ajax.php?action=upload`, formData)
+    const { data } = await api.file<Upload>(`${uploadApi}/ajax.php?action=upload`, formData)
     if (data && data.filepath) {
         insertImage({
             url: `${uploadApi}/${data.filepath}`,

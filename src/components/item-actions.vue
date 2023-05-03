@@ -12,7 +12,9 @@
         <a href="javascript:;" class="action-item action-item-fav">
             <i class="icon icon-action-fav" /><span class="text">{{ item.visit }} 浏览</span>
         </a>
-        <a href="javascript:;" class="action-item" @click="handleShare"> <i class="icon icon-action-share" /><span class="text">分享</span> </a>
+        <a href="javascript:;" class="action-item" @click="handleShare">
+            <i class="icon icon-action-share" /><span class="text">分享</span>
+        </a>
     </div>
 </template>
 
@@ -46,7 +48,8 @@ const handleLike = useLockFn(async () => {
         return
     }
     let url = 'frontend/like'
-    if (item.like_status) url = 'frontend/unlike'
+    if (item.like_status)
+        url = 'frontend/unlike'
     const { code, message } = await api.get(url, { id: item._id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
@@ -56,7 +59,7 @@ const handleLike = useLockFn(async () => {
         })
     }
 })
-const handleShare = () => {
+function handleShare() {
     const top = window.screen.height / 2 - 250
     const left = window.screen.width / 2 - 300
     const title = `${item.title} - M.M.F 小屋`

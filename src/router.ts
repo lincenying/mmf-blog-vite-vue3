@@ -5,13 +5,9 @@
 
 import cookies from 'js-cookie'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import {
-    createRouter as _createRouter,
-    createMemoryHistory,
-    createWebHistory,
-} from 'vue-router'
+import { createRouter as _createRouter, createMemoryHistory, createWebHistory } from 'vue-router'
 import type { Pinia } from 'pinia'
-import { isBrowser } from 'lcy-utils'
+import { isBrowser } from '@lincy/utils'
 
 // 定义切割点，异步加载路由组件
 const notFound = () => import('./pages/404.vue')
@@ -37,7 +33,7 @@ const adminModify = () => import('./pages/backend-admin-modify.vue')
 const userList = () => import('./pages/backend-user-list.vue')
 const userModify = () => import('./pages/backend-user-modify.vue')
 
-const guardRoute = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+function guardRoute(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const token = cookies.get('user')
     if (isBrowser && !token)
         next('/')
@@ -45,7 +41,7 @@ const guardRoute = (to: RouteLocationNormalized, from: RouteLocationNormalized, 
         next()
 }
 
-const guardRouteBackend = (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+function guardRouteBackend(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const token = cookies.get('b_user')
     if (isBrowser && !token)
         next('/backend/login')
@@ -59,10 +55,7 @@ const backendConfig = {
 }
 
 const routes = [
-    {
-        path: '/index.html',
-        redirect: '/',
-    },
+    { path: '/index.html', redirect: '/' },
     { name: 'index', path: '/', component: index, meta: { index: 1 } },
     { name: 'trending', path: '/trending/:by', component: index, meta: { index: 1 } },
     { name: 'category', path: '/category/:id', component: index, meta: { index: 1 } },
@@ -76,16 +69,8 @@ const routes = [
         meta: { index: 1 },
         beforeEnter: guardRoute,
         children: [
-            {
-                path: 'account',
-                component: account,
-                meta: { path: '/user' },
-            },
-            {
-                path: 'password',
-                component: password,
-                meta: { path: '/user' },
-            },
+            { path: 'account', component: account, meta: { path: '/user' } },
+            { path: 'password', component: password, meta: { path: '/user' } },
         ],
     },
 
@@ -115,8 +100,7 @@ const routes = [
 
 export function createRouter(store: Pinia) {
     const router = _createRouter({
-        // use appropriate history implementation for server/client
-        // import.meta.env.SSR is injected by Vite.
+        // 为服务器/客户端使用适当的历史实现 import.meta.env.SSR 由 Vite 注入。
         history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
         routes,
     })
@@ -134,7 +118,7 @@ export function createRouter(store: Pinia) {
             // const pageTransitionName = isForward(to, from) ? slideLeft : slideRight
             // =================== //
             // 根据路由中的 meta.index 来判断切换动画
-            let pageTransitionName
+            let pageTransitionName: string
             if (!from.meta.index || to.meta.index === from.meta.index)
                 pageTransitionName = 'fade'
             else if ((to.meta.index as number) > (from.meta.index as number))
@@ -145,24 +129,6 @@ export function createRouter(store: Pinia) {
             appShellStore.setPageTransitionName(pageTransitionName)
         }
         next()
-    })
-
-    router.beforeResolve(async (to, from) => {
-        let diffed = false
-        const activated = to.matched.filter((c, i) => {
-            return diffed || (diffed = from.matched[i] !== c)
-        })
-
-        if (!activated.length) return false
-
-        await Promise.all(
-            activated.map((c) => {
-                if ((c.components?.default as any).asyncData)
-                    return (c.components?.default as any).asyncData({ store, route: to })
-
-                return true
-            }),
-        )
     })
 
     return router

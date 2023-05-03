@@ -32,11 +32,11 @@
 
 <script setup lang="ts">
 import { ContentLoader } from 'vue-content-loader'
-import type { asyncDataConfig } from '@/types'
+import type { AsyncDataConfig } from '@/types'
 
 defineOptions({
     name: 'frontend-index',
-    asyncData(payload: asyncDataConfig) {
+    asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const {
             params: { id, key, by },
@@ -69,8 +69,9 @@ const {
 } = route
 
 const [loading, toggleLoading] = useToggle(false)
-const loadMore = async (page = topics.page + 1) => {
-    if (loading.value) return
+async function loadMore(page = topics.page + 1) {
+    if (loading.value)
+        return
     toggleLoading(true)
     await frontendArticleStore.getArticleList({ page, limit: 10, id, path, key, by })
     toggleLoading(false)
@@ -78,7 +79,8 @@ const loadMore = async (page = topics.page + 1) => {
 
 onActivated(() => {
     console.log(`frontend-index onActivated:${route.path}`)
-    if (topics.path !== route.path) loadMore(1)
+    if (topics.path !== route.path)
+        loadMore(1)
 })
 
 // onMounted(() => {

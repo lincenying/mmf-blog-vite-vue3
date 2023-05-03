@@ -26,13 +26,13 @@
 </template>
 
 <script setup lang="ts">
-import { UTC2Date } from 'lcy-utils'
-import type { asyncDataConfig } from '@/types'
+import { UTC2Date } from '@lincy/utils'
+import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-user-list',
-    asyncData(payload: asyncDataConfig) {
+    asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const backendUserStore = useBackendUserStore(store)
         return backendUserStore.getUserList({ page: 1, path: route.path }, api)
@@ -51,20 +51,21 @@ useSaveScroll()
 
 const [loading, toggleLoading] = useToggle(false)
 
-const loadMore = async (page = lists.page + 1) => {
-    if (loading.value) return
+async function loadMore(page = lists.page + 1) {
+    if (loading.value)
+        return
     toggleLoading(true)
     await backendUserStore.getUserList({ page })
     toggleLoading(false)
 }
-const handleRecover = async (id: string) => {
+async function handleRecover(id: string) {
     const { code, message } = await api.get('backend/user/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         backendUserStore.recoverUser(id)
     }
 }
-const handleDelete = async (id: string) => {
+async function handleDelete(id: string) {
     const { code, message } = await api.get('backend/user/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })

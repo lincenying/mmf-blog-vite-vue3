@@ -12,9 +12,9 @@ module.exports = {
                 networkTimeoutSeconds: 1,
                 cacheName: 'api-cache',
                 cacheableResponse: {
-                    statuses: [0, 200]
-                }
-            }
+                    statuses: [0, 200],
+                },
+            },
         },
         {
             urlPattern: /^https:\/\/cdn\.jsdelivr\.net/,
@@ -23,9 +23,9 @@ module.exports = {
                 networkTimeoutSeconds: 1,
                 cacheName: 'cdn-cache',
                 cacheableResponse: {
-                    statuses: [0, 200]
-                }
-            }
-        }
-    ]
+                    statuses: [0, 200],
+                },
+            },
+        },
+    ],
 }

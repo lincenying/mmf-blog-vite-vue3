@@ -31,13 +31,13 @@
 </template>
 
 <script setup lang="ts">
-import { getDateDiff } from 'lcy-utils'
-import type { asyncDataConfig } from '@/types'
+import { getDateDiff } from '@lincy/utils'
+import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-article-comment',
-    asyncData(payload: asyncDataConfig) {
+    asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCommentStore = useGlobalCommentStore(store)
         return globalCommentStore.getCommentList({ page: 1, path: route.path, all: 1, id: route.params.id }, api)
@@ -52,20 +52,21 @@ const { lists } = $(storeToRefs(globalCommentStore))
 
 const [loading, toggleLoading] = useToggle(false)
 
-const loadMore = async (page = lists.page + 1) => {
-    if (loading.value) return
+async function loadMore(page = lists.page + 1) {
+    if (loading.value)
+        return
     toggleLoading(true)
     await globalCommentStore.getCommentList({ page, path: route.path, all: 1, id: route.params.id }, api)
     toggleLoading(false)
 }
-const handleRecover = async (id: string) => {
+async function handleRecover(id: string) {
     const { code, message } = await api.get('frontend/comment/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         globalCommentStore.recoverComment(id)
     }
 }
-const handleDelete = async (id: string) => {
+async function handleDelete(id: string) {
     const { code, message } = await api.get('frontend/comment/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })

@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import api from '@/api/index-client'
+import type { User } from '@/types'
 
 defineOptions({
     name: 'frontend-user-account',
@@ -35,8 +36,8 @@ const { cookies } = $(toRefs(globalStore))
 let username = $ref('')
 let email = $ref('')
 
-const getUser = async () => {
-    const { code, data } = await api.get('frontend/user/account', {})
+async function getUser() {
+    const { code, data } = await api.get<User>('frontend/user/account', {})
     if (code === 200) {
         username = data.username
         email = data.email

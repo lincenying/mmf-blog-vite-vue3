@@ -19,28 +19,26 @@ axios.interceptors.response.use(
     error => Promise.resolve(error.response),
 )
 
-function checkStatus(response: AxiosResponse) {
+function checkStatus(response: AxiosResponse): ResponseData<any> {
     if (response && (response.status === 200 || response.status === 304))
-        return response
-
+        return response.data
     return {
-        data: {
-            code: -404,
-            message: (response && response.statusText) || '未知错误',
-            data: '',
-        },
+        code: -404,
+        message: (response && response.statusText) || '未知错误',
+        data: '',
+
     }
 }
 
-function checkCode(res: any) {
-    if (res.data.code === -500)
+function checkCode(res: ResponseData<any>): ResponseData<any> {
+    if (res.code === -500)
         window.location.href = '/backend'
-    else if (res.data.code === -400)
+    else if (res.code === -400)
         window.location.href = '/'
-    else if (res.data.code !== 200)
-        showMsg(res.data.message)
+    else if (res.code !== 200)
+        showMsg(res.message)
 
-    return res && res.data
+    return res
 }
 
 type API = () => ApiClientReturn
@@ -55,7 +53,7 @@ type API = () => ApiClientReturn
  * file(url: '/api/url', data: {}, headers: {})
  * ```
  */
-const _api: API = () => ({
+const api: API = () => ({
     async file(url, data) {
         const response = await axios({
             method: 'post',
@@ -97,4 +95,4 @@ const _api: API = () => ({
     },
 })
 
-export default _api()
+export default api()

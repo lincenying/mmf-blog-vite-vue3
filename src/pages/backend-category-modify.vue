@@ -18,12 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import type { asyncDataConfig } from '@/types'
+import type { AsyncDataConfig, Category } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'backend-category-modify',
-    asyncData(payload: asyncDataConfig) {
+    asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
         return globalCategoryStore.getCategoryItem({ path: route.path, id: route.params.id }, api)
@@ -53,14 +53,15 @@ watch(item, (val) => {
 
 onMounted(async () => {})
 
-const handleModify = async () => {
+async function handleModify() {
     if (!form.cate_name || !form.cate_order) {
         showMsg('请将表单填写完整!')
         return
     }
-    if (loading.value) return
+    if (loading.value)
+        return
     toggleLoading(true)
-    const { code, data, message } = await api.post('backend/category/modify', form)
+    const { code, data, message } = await api.post<Category>('backend/category/modify', form)
     toggleLoading(false)
     if (code === 200) {
         showMsg({ type: 'success', content: message })
