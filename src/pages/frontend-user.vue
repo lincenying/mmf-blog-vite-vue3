@@ -13,10 +13,10 @@
 
 <script setup lang="ts">
 defineOptions({
-    name: 'frontend-user',
+    name: 'FrontendUser',
 })
 
-const { route } = useGlobal()
+const route = useRoute()
 
 const key = computed(() => {
     return route.path.replace(/\//g, '_')

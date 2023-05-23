@@ -34,7 +34,7 @@ import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
-    name: 'backend-article-list',
+    name: 'BackendArticleList',
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const backendArticleStore = useBackendArticleStore(store)
@@ -42,7 +42,8 @@ defineOptions({
     },
 })
 
-const { route, appShellStore } = useGlobal()
+const route = useRoute()
+const appShellStore = useAppShellStore()
 
 // pinia 状态管理 ===>
 const backendArticleStore = useBackendArticleStore()

@@ -26,7 +26,7 @@ import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
-    name: 'backend-category-list',
+    name: 'BackendCategoryList',
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
@@ -34,7 +34,8 @@ defineOptions({
     },
 })
 
-const { route, appShellStore } = useGlobal()
+const route = useRoute()
+const appShellStore = useAppShellStore()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()

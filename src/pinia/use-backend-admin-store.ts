@@ -1,9 +1,9 @@
-import { acceptHMRUpdate } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 import api from '@/api/index-client'
 import type { AdminStore, ApiClientReturn, ApiConfig, ApiServerReturn, User } from '@/types'
 
-const useStore = defineStore('backendAdminStore', () => {
+const usePiniaStore = defineStore('backendAdminStore', () => {
     const state = reactive<AdminStore>({
         lists: {
             hasNext: 0,
@@ -99,7 +99,8 @@ const useStore = defineStore('backendAdminStore', () => {
     }
 })
 
-export default useStore
+export default usePiniaStore
+export const backendAdminStoreWithout = () => usePiniaStore(piniaInit)
 
 if (import.meta.hot)
-    import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot))
+    import.meta.hot.accept(acceptHMRUpdate(usePiniaStore, import.meta.hot))

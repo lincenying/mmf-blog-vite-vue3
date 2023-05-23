@@ -1,10 +1,10 @@
-import { acceptHMRUpdate } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 import type { ApiClientReturn, ApiConfig, ApiServerReturn, Comment, CommentStore } from '@/types'
 
 import api from '@/api/index-client'
 
-const useStore = defineStore('globalCommentStore', () => {
+const usePiniaStore = defineStore('globalCommentStore', () => {
     const state = reactive<CommentStore>({
         lists: {
             data: [],
@@ -80,7 +80,8 @@ const useStore = defineStore('globalCommentStore', () => {
     }
 })
 
-export default useStore
+export default usePiniaStore
+export const globalCommentStoreWithout = () => usePiniaStore(piniaInit)
 
 if (import.meta.hot)
-    import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot))
+    import.meta.hot.accept(acceptHMRUpdate(usePiniaStore, import.meta.hot))

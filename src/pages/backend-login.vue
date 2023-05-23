@@ -23,10 +23,11 @@ import cookies from 'js-cookie'
 import api from '@/api/index-client'
 
 defineOptions({
-    name: 'backend-login',
+    name: 'BackendLogin',
 })
 
-const { ctx, router } = useGlobal()
+const { ctx } = useGlobal()
+const router = useRouter()
 
 const form = reactive({
     username: '',

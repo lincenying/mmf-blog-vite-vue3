@@ -35,7 +35,7 @@ import { ContentLoader } from 'vue-content-loader'
 import type { AsyncDataConfig } from '@/types'
 
 defineOptions({
-    name: 'frontend-index',
+    name: 'FrontendIndex',
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const {
@@ -52,7 +52,7 @@ defineOptions({
     },
 })
 
-const { route } = useGlobal()
+const route = useRoute()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()

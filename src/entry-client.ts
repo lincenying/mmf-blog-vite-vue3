@@ -29,24 +29,6 @@ VueMarkdownEditor.use(vuePressTheme, {
 const { app, router, store } = createApp()
 
 router.isReady().then(() => {
-    router.beforeResolve(async (to, from) => {
-        let diffed = false
-        const activated = to.matched.filter((c, i) => {
-            return diffed || (diffed = from.matched[i] !== c)
-        })
-
-        if (!activated.length)
-            return false
-
-        await Promise.all(
-            activated.map((c) => {
-                if ((c.components?.default as any).asyncData)
-                    return (c.components?.default as any).asyncData({ store, route: to })
-
-                return true
-            }),
-        )
-    })
     app.component('ReloadPrompt', reloadPrompt)
     app.use(LoadingPlugin, {
         'can-cancel': false,

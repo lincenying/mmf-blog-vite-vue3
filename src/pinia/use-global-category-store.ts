@@ -1,9 +1,9 @@
-import { acceptHMRUpdate } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 import type { ApiClientReturn, ApiConfig, ApiServerReturn, Category, CategoryStore } from '@/types'
 import api from '@/api/index-client'
 
-const useStore = defineStore('globalCategoryStore', () => {
+const usePiniaStore = defineStore('globalCategoryStore', () => {
     const state = reactive<CategoryStore>({
         lists: [],
         item: {
@@ -70,7 +70,8 @@ const useStore = defineStore('globalCategoryStore', () => {
     }
 })
 
-export default useStore
+export default usePiniaStore
+export const globalCategoryStoreWithout = () => usePiniaStore(piniaInit)
 
 if (import.meta.hot)
-    import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot))
+    import.meta.hot.accept(acceptHMRUpdate(usePiniaStore, import.meta.hot))

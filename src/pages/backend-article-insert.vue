@@ -39,7 +39,7 @@ import api from '@/api/index-client'
 import { uploadApi } from '@/api/upload-api'
 
 defineOptions({
-    name: 'backend-article-insert',
+    name: 'BackendArticleInsert',
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
@@ -47,7 +47,8 @@ defineOptions({
     },
 })
 
-const { ctx, router } = useGlobal()
+const { ctx } = useGlobal()
+const router = useRouter()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()

@@ -36,7 +36,7 @@ import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
-    name: 'backend-article-comment',
+    name: 'BackendArticleComment',
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCommentStore = useGlobalCommentStore(store)
@@ -44,7 +44,7 @@ defineOptions({
     },
 })
 
-const { route } = useGlobal()
+const route = useRoute()
 
 // pinia 状态管理 ===>
 const globalCommentStore = useGlobalCommentStore()

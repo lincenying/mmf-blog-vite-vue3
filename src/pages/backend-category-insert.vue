@@ -19,10 +19,10 @@ import api from '@/api/index-client'
 import type { Category } from '@/types'
 
 defineOptions({
-    name: 'backend-category-insert',
+    name: 'BackendCategoryInsert',
 })
 
-const { router } = useGlobal()
+const router = useRouter()
 
 // pinia 状态管理 ===>
 const globalCategoryStore = useGlobalCategoryStore()

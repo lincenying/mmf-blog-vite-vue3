@@ -28,7 +28,7 @@ import type { AsyncDataConfig, User } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
-    name: 'backend-admin-modify',
+    name: 'BackendAdminModify',
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const backendAdminStore = useBackendAdminStore(store)
@@ -36,7 +36,8 @@ defineOptions({
     },
 })
 
-const { route, router } = useGlobal()
+const route = useRoute()
+const router = useRouter()
 
 // pinia 状态管理 ===>
 const backendAdminStore = useBackendAdminStore()

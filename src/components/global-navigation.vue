@@ -46,13 +46,12 @@ const props = defineProps<{
 }>()
 
 defineOptions({
-    name: 'global-navigation',
+    name: 'GlobalNavigation',
 })
 
 const { isBackend } = $(toRefs(props))
 
-const { router, globalStore } = useGlobal()
-
+const globalStore = useGlobalStore()
 const { cookies } = $(toRefs(globalStore))
 
 const isLogin = computed(() => {
@@ -62,6 +61,8 @@ const isLogin = computed(() => {
 function handleLogin() {
     globalStore.setLoginModal(true)
 }
+
+const router = useRouter()
 function onSearch(e: any) {
     const qs = e.target.value
     if (qs === '')

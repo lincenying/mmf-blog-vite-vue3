@@ -1,4 +1,4 @@
-import { createSSRApp } from 'vue'
+import { createApp as createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createHead } from '@vueuse/head'
 

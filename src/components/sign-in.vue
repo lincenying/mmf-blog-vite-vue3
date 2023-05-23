@@ -30,12 +30,12 @@ const props = defineProps<{
 }>()
 
 defineOptions({
-    name: 'sign-in',
+    name: 'SignIn',
 })
 
 const { show } = $(toRefs(props))
 
-const { globalStore } = useGlobal()
+const globalStore = useGlobalStore()
 
 const form = reactive({
     username: '',

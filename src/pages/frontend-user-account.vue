@@ -25,10 +25,10 @@ import api from '@/api/index-client'
 import type { User } from '@/types'
 
 defineOptions({
-    name: 'frontend-user-account',
+    name: 'FrontendUserAccount',
 })
 
-const { globalStore } = useGlobal()
+const globalStore = useGlobalStore()
 
 // pinia 状态管理 ===>
 const { cookies } = $(toRefs(globalStore))
