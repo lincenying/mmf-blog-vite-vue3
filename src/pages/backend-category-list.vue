@@ -1,5 +1,5 @@
 <template>
-    <div class="settings-main card">
+    <div class="card settings-main">
         <div class="settings-main-content">
             <div class="list-section">
                 <div class="list-title">分类名称</div>
@@ -30,7 +30,7 @@ defineOptions({
     asyncData(payload: AsyncDataConfig) {
         const { store, route, api } = payload
         const globalCategoryStore = useGlobalCategoryStore(store)
-        return globalCategoryStore.getCategoryList({ limit: 99, path: route.path }, api)
+        return globalCategoryStore.getCategoryList({ limit: 99, path: route.fullPath }, api)
     },
 })
 
