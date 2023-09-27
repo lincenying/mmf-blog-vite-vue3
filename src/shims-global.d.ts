@@ -1,25 +1,14 @@
 /* eslint-disable no-unused-vars */
 
-/**
- * Null 或者 T
- */
+/** * Null 或者 T */
 declare type Nullable<T> = T | null
-/**
- * 非 Null 类型
- */
+/** * 非 Null 类型 */
 declare type NonNullable<T> = T extends null | undefined ? never : T
-/**
- * Undefined 或者 T
- */
+/** * Undefined 或者 T */
 declare type UnfAble<T> = T | undefined
-/**
- * 键为字符串, 值为 Any 的对象
- */
+/** * 键为字符串, 值为 Any 的对象 */
 declare type Obj = Record<string, any>
-
-/**
- * 键为字符串, 值为 T 的对象
- */
+/** * 键为字符串, 值为 T 的对象 */
 declare type ObjT<T> = Record<string, T>
 
 /**
@@ -51,7 +40,7 @@ declare interface ResponseData<T> {
  * }
  * ```
  */
-declare interface ResponseDataLists<T> {
+declare interface ResDataLists<T> {
     hasNext: number | boolean
     hasPrev: number | boolean
     total: number
@@ -66,16 +55,33 @@ declare interface ResponseDataLists<T> {
  * }
  * ```
  */
-declare interface ResponseDataList<T> {
+declare interface ResDataList<T> {
     list: T
 }
 
+/**
+ * Api 浏览器端封装类型
+ */
+declare interface ApiClient {
+    get<T = void>(url: string, params: Obj, headers?: Obj): Promise<ResponseData<T>>
+    post<T = void>(url: string, data: Obj, headers?: Obj): Promise<ResponseData<T>>
+    file<T = void>(url: string, data: Obj, headers?: Obj): Promise<ResponseData<T>>
+}
+
+/**
+ * Api Node端封装类型
+ */
+declare interface ApiServer {
+    get<T = void>(url: string, params: Obj, headers?: Obj): Promise<ResponseData<T>>
+    post<T = void>(url: string, data: Obj, headers?: Obj): Promise<ResponseData<T>>
+    cookies: import('./types').UserCookies
+    api: import('axios').AxiosInstance
+    getCookies: () => import('./types').UserCookies
+}
+
+declare type ApiType = ApiServer | ApiClient
 
 declare interface Window {
-    $$api: {
-        post: (...args) => Promise<any>
-        get: (...args) => Promise<any>
-        [propName: string]: (...args) => Promise<any>
-    }
-    __INITIAL_STATE__: any
+    $$api: UnfAble<ApiClient>
+    __INITIAL_STATE__: Record<string, any>
 }

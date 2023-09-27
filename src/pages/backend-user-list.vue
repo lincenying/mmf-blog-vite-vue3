@@ -27,13 +27,12 @@
 
 <script setup lang="ts">
 import { UTC2Date } from '@lincy/utils'
-import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'BackendUserList',
-    asyncData(payload: AsyncDataConfig) {
-        const { store, route, api } = payload
+    asyncData(ctx) {
+        const { store, route, api } = ctx
         const backendUserStore = useBackendUserStore(store)
         return backendUserStore.getUserList({ page: 1, path: route.fullPath }, api)
     },
@@ -60,14 +59,14 @@ async function loadMore(page = lists.page + 1) {
     toggleLoading(false)
 }
 async function handleRecover(id: string) {
-    const { code, message } = await api.get('backend/user/recover', { id })
+    const { code, message } = await api.get<'success' | 'error'>('backend/user/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         backendUserStore.recoverUser(id)
     }
 }
 async function handleDelete(id: string) {
-    const { code, message } = await api.get('backend/user/delete', { id })
+    const { code, message } = await api.get<'success' | 'error'>('backend/user/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         backendUserStore.deleteUser(id)
@@ -84,9 +83,7 @@ onMounted(() => {
     }
 })
 
-const headTitle = computed(() => {
-    return '用户列表 - M.M.F 小屋'
-})
+const headTitle = ref('用户列表 - M.M.F 小屋')
 useHead({
     // Can be static or computed
     title: headTitle,

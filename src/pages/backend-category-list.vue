@@ -22,13 +22,12 @@
 </template>
 
 <script setup lang="ts">
-import type { AsyncDataConfig } from '@/types'
 import api from '@/api/index-client'
 
 defineOptions({
     name: 'BackendCategoryList',
-    asyncData(payload: AsyncDataConfig) {
-        const { store, route, api } = payload
+    asyncData(ctx) {
+        const { store, route, api } = ctx
         const globalCategoryStore = useGlobalCategoryStore(store)
         return globalCategoryStore.getCategoryList({ limit: 99, path: route.fullPath }, api)
     },
@@ -66,7 +65,7 @@ onMounted(() => {
 })
 
 async function handleRecover(id: string) {
-    const { code, message } = await api.get('backend/category/recover', { id })
+    const { code, message } = await api.get<'success' | 'error'>('backend/category/recover', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         globalCategoryStore.recoverCategory(id)
@@ -74,16 +73,14 @@ async function handleRecover(id: string) {
 }
 
 async function handleDelete(id: string) {
-    const { code, message } = await api.get('backend/category/delete', { id })
+    const { code, message } = await api.get<'success' | 'error'>('backend/category/delete', { id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         globalCategoryStore.deleteCategory(id)
     }
 }
 
-const headTitle = computed(() => {
-    return '分类列表 - M.M.F 小屋'
-})
+const headTitle = ref('分类列表 - M.M.F 小屋')
 useHead({
     // Can be static or computed
     title: headTitle,

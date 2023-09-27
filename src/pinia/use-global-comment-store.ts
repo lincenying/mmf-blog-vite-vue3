@@ -1,11 +1,11 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
-import type { ApiClientReturn, ApiConfig, ApiServerReturn, Comment, CommentStore } from '@/types'
+import type { ApiConfig, Comment, CommentStore } from '@/types'
 
 import api from '@/api/index-client'
 
 const usePiniaStore = defineStore('globalCommentStore', () => {
-    const state = reactive<CommentStore>({
+    const state: CommentStore = reactive({
         lists: {
             data: [],
             hasNext: 0,
@@ -15,13 +15,18 @@ const usePiniaStore = defineStore('globalCommentStore', () => {
         },
     })
 
-    const getCommentList = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
+    /**
+     * 读取评论列表
+     * @param config 请求参数
+     * @param $api
+     */
+    const getCommentList = async (config: ApiConfig, $api?: ApiType) => {
         if (!$api)
             $api = api
         if (config.path === state.lists.path && config.page === 1)
             return
-        const { code, data } = await $api.get<ResponseDataLists<Comment[]>>('frontend/comment/list', { ...config, path: undefined, cache: true })
-        if (data && code === 200) {
+        const { code, data } = await $api.get<ResDataLists<Comment[]>>('frontend/comment/list', { ...config, path: undefined, cache: true })
+        if (code === 200 && data) {
             const {
                 list = [],
                 path = '',
@@ -42,9 +47,17 @@ const usePiniaStore = defineStore('globalCommentStore', () => {
             }
         }
     }
+    /**
+     * 添加评论成功后, 插入评论
+     * @param payload 评论详情
+     */
     const insertCommentItem = (payload: Comment) => {
         state.lists.data = [payload].concat(state.lists.data)
     }
+    /**
+     * 删除评论成功后, 更新评论数据
+     * @param id 评论ID
+     */
     const deleteComment = (id: string) => {
         const index = state.lists.data.findIndex(ii => ii._id === id)
         if (index > -1) {
@@ -54,6 +67,11 @@ const usePiniaStore = defineStore('globalCommentStore', () => {
             })
         }
     }
+
+    /**
+     * 恢复评论成功后, 更新评论数据
+     * @param id 评论ID
+     */
     const recoverComment = (id: string) => {
         const index = state.lists.data.findIndex(ii => ii._id === id)
         if (index > -1) {

@@ -1,6 +1,6 @@
 <template>
-    <div class="home-feeds cards-wrap">
-        <div class="settings-main card">
+    <div class="cards-wrap home-feeds">
+        <div class="card settings-main">
             <div class="settings-main-content">
                 <form>
                     <a-input title="昵称">
@@ -58,7 +58,7 @@ const handleSubmit = useLockFn(async () => {
         showMsg('邮箱格式错误!')
         return
     }
-    const { code, message } = await api.post('frontend/user/account', {
+    const { code, message } = await api.post<'success' | 'error'>('frontend/user/account', {
         email,
         username,
         id: cookies.userid,
@@ -72,9 +72,7 @@ const handleSubmit = useLockFn(async () => {
     }
 })
 
-const headTitle = computed(() => {
-    return '帐号 - M.M.F 小屋'
-})
+const headTitle = ref('帐号 - M.M.F 小屋')
 
 useHead({
     // Can be static or computed

@@ -1,11 +1,11 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
-import type { ApiClientReturn, ApiConfig, ApiServerReturn, Article, FArticleStore } from '@/types'
+import type { ApiConfig, Article, FArticleStore } from '@/types'
 
 import api from '@/api/index-client'
 
 const usePiniaStore = defineStore('frontendArticleStore', () => {
-    const state = reactive<FArticleStore>({
+    const state: FArticleStore = reactive({
         lists: {
             data: [],
             path: '',
@@ -20,13 +20,18 @@ const usePiniaStore = defineStore('frontendArticleStore', () => {
         trending: [],
     })
 
-    const getArticleList = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
+    /**
+     * 读取文章列表
+     * @param config 请求参数
+     * @param $api
+     */
+    const getArticleList = async (config: ApiConfig, $api?: ApiType) => {
         if (!$api)
             $api = api
         if (state.lists.data.length > 0 && config.path === state.lists.path && config.page === 1)
             return
-        const { code, data } = await $api.get<ResponseDataLists<Article[]>>('frontend/article/list', { ...config, path: undefined, cache: true })
-        if (data && code === 200) {
+        const { code, data } = await $api.get<ResDataLists<Article[]>>('frontend/article/list', { ...config, path: undefined, cache: true })
+        if (code === 200 && data) {
             const {
                 list = [],
                 path,
@@ -48,11 +53,16 @@ const usePiniaStore = defineStore('frontendArticleStore', () => {
             }
         }
     }
-    const getArticleItem = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
+    /**
+     * 读取文章详情
+     * @param config 请求参数
+     * @param $api
+     */
+    const getArticleItem = async (config: ApiConfig, $api?: ApiType) => {
         if (!$api)
             $api = api
         const { code, data } = await $api.get<Article>('frontend/article/item', { ...config, path: undefined, markdown: 1, cache: true })
-        if (data && code === 200) {
+        if (code === 200 && data) {
             state.item = {
                 data,
                 ...config,
@@ -60,15 +70,26 @@ const usePiniaStore = defineStore('frontendArticleStore', () => {
             }
         }
     }
-    const getTrending = async (_: any, $api?: ApiServerReturn | ApiClientReturn) => {
+    /**
+     * 读取热门列表
+     * @param _
+     * @param $api
+     */
+    const getTrending = async (_: any, $api?: ApiType) => {
         if (!$api)
             $api = api
         if (state.trending.length)
             return
-        const { code, data } = await $api.get<ResponseDataList<Article[]>>('frontend/trending', { cache: true })
-        if (data && code === 200)
+        const { code, data } = await $api.get<ResDataList<Article[]>>('frontend/trending', { cache: true })
+        if (code === 200 && data)
             state.trending = data.list
     }
+    /**
+     * 编辑点赞状态
+     * @param payload 请求参数
+     * @param payload.id ID
+     * @param payload.status 状态
+     */
     const modifyLikeStatus = (payload: { id: string; status: boolean }) => {
         const { id, status } = payload
         if (state.item.data && state.item.data._id === id) {

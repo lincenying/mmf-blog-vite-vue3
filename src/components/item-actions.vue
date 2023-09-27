@@ -23,13 +23,13 @@ import type { Article } from '@/types'
 
 import api from '@/api/index-client'
 
-const props = defineProps<{
-    item: Article
-}>()
-
 defineOptions({
     name: 'ItemActions',
 })
+
+const props = defineProps<{
+    item: Article
+}>()
 
 const { item } = $(toRefs(props))
 
@@ -49,7 +49,7 @@ const handleLike = useLockFn(async () => {
     let url = 'frontend/like'
     if (item.like_status)
         url = 'frontend/unlike'
-    const { code, message } = await api.get(url, { id: item._id })
+    const { code, message } = await api.get<'success' | 'error'>(url, { id: item._id })
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         frontendArticleStore.modifyLikeStatus({

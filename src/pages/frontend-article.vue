@@ -21,7 +21,7 @@
                 <div class="card card-answer">
                     <div class="answer-content">
                         <!-- eslint-disable-next-line vue/no-v-html -->
-                        <div class="article-content markdown-body" v-html="addTarget(articleData.html)" />
+                        <div class="markdown-body article-content" v-html="addTarget(articleData.html)" />
                     </div>
                     <item-actions :item="articleData" />
                 </div>
@@ -41,12 +41,11 @@
 
 <script setup lang="ts">
 import { ContentLoader } from 'vue-content-loader'
-import type { AsyncDataConfig } from '@/types'
 
 defineOptions({
     name: 'FrontendArticle',
-    asyncData(payload: AsyncDataConfig) {
-        const { store, route, api } = payload
+    asyncData(ctx) {
+        const { store, route, api } = ctx
         const {
             fullPath: path,
             params: { id },

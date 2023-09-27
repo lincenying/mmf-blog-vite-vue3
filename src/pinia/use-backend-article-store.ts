@@ -1,11 +1,11 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
-import type { ApiClientReturn, ApiConfig, ApiServerReturn, Article, ArticleStore } from '@/types'
+import type { ApiConfig, Article, ArticleStore } from '@/types'
 
 import api from '@/api/index-client'
 
 const usePiniaStore = defineStore('backendArticleStore', () => {
-    const state = reactive<ArticleStore>({
+    const state: ArticleStore = reactive({
         lists: {
             data: [],
             path: '',
@@ -19,13 +19,18 @@ const usePiniaStore = defineStore('backendArticleStore', () => {
         },
     })
 
-    const getArticleList = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
+    /**
+     * 读取文章列表 - 后台
+     * @param config 请求参数
+     * @param $api
+     */
+    const getArticleList = async (config: ApiConfig, $api?: ApiType) => {
         if (!$api)
             $api = api
         if (state.lists.data.length > 0 && config.path === state.lists.path && config.page === 1)
             return
-        const { code, data } = await $api.get<ResponseDataLists<Article[]>>('backend/article/list', { ...config, path: undefined, cache: true })
-        if (data && code === 200) {
+        const { code, data } = await $api.get<ResDataLists<Article[]>>('backend/article/list', { ...config, path: undefined, cache: true })
+        if (code === 200 && data) {
             const {
                 list = [],
                 path,
@@ -47,17 +52,26 @@ const usePiniaStore = defineStore('backendArticleStore', () => {
             }
         }
     }
-    const getArticleItem = async (config: ApiConfig, $api?: ApiServerReturn | ApiClientReturn) => {
+    /**
+     * 读取文章详情 - 后台
+     * @param config 请求参数
+     * @param $api
+     */
+    const getArticleItem = async (config: ApiConfig, $api?: ApiType) => {
         if (!$api)
             $api = api
         const { code, data } = await $api.get<Article>('backend/article/item', { ...config, path: undefined })
-        if (data && code === 200) {
+        if (code === 200 && data) {
             state.item = {
                 data,
                 ...config,
             }
         }
     }
+    /**
+     * 删除文章
+     * @param id 文章ID
+     */
     const deleteArticle = async (id: string) => {
         const index = state.lists.data.findIndex(ii => ii._id === id)
         if (index > -1) {
@@ -67,6 +81,10 @@ const usePiniaStore = defineStore('backendArticleStore', () => {
             })
         }
     }
+    /**
+     * 恢复文章
+     * @param id 文章ID
+     */
     const recoverArticle = async (id: string) => {
         const index = state.lists.data.findIndex(ii => ii._id === id)
         if (index > -1) {
@@ -76,10 +94,18 @@ const usePiniaStore = defineStore('backendArticleStore', () => {
             })
         }
     }
+    /**
+     * 发布文章成功后追加文章
+     * @param payload 文章详情
+     */
     const insertArticleItem = (payload: Article) => {
         if (state.lists.path)
             state.lists.data = [payload].concat(state.lists.data)
     }
+    /**
+     * 编辑成功后更新文章
+     * @param payload 文章详情
+     */
     const updateArticleItem = (payload: Article) => {
         const index = state.lists.data.findIndex(ii => ii._id === payload._id)
         if (index > -1)

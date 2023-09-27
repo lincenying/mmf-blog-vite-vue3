@@ -52,7 +52,7 @@ const handleSubmit = useLockFn(async () => {
     else if (form.password !== form.re_password)
         return showMsg('两次密码输入不一致!')
 
-    const { code, message } = await api.post('frontend/user/password', form)
+    const { code, message } = await api.post<'success' | 'error'>('frontend/user/password', form)
     if (code === 200) {
         showMsg({ type: 'success', content: message })
         form.old_password = ''
@@ -61,9 +61,7 @@ const handleSubmit = useLockFn(async () => {
     }
 })
 
-const headTitle = computed(() => {
-    return '密码 - M.M.F 小屋'
-})
+const headTitle = ref('密码 - M.M.F 小屋')
 
 useHead({
     // Can be static or computed
