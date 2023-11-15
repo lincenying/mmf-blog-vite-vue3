@@ -1,6 +1,8 @@
 import type { Pinia } from 'pinia'
 import type { RouteComponent, RouteLocationNormalized } from 'vue-router'
 
+export type CusRouteComponent = RouteComponent & { asyncData: (payload: AsyncDataConfig) => Promise<any> }
+
 /**
  * 服务端回传参数
  * ```
@@ -17,8 +19,6 @@ export interface AsyncDataConfig {
     api?: ApiServer
     req?: any
 }
-
-export type CusRouteComponent = RouteComponent & { asyncData: (payload: AsyncDataConfig) => Promise<any> }
 
 /**
  * 请求参数合集

@@ -18,6 +18,18 @@ import Components from './vite.config.components'
 import PWA from './vite.config.pwa'
 import Build from './vite.config.build'
 
+function charsetRemoval() {
+    return {
+        postcssPlugin: 'internal:charset-removal',
+        AtRule: {
+            charset: (atRule: any) => {
+                if (atRule.name === 'charset')
+                    atRule.remove()
+            },
+        },
+    }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
     const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -63,6 +75,13 @@ export default defineConfig(({ mode, command }) => {
             include: ['axios', 'qs'],
         },
         ...Build,
+        css: {
+            postcss: {
+                plugins: [
+                    charsetRemoval(),
+                ],
+            },
+        },
     }
     return config
 })
