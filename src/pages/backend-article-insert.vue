@@ -22,6 +22,7 @@
                             :disabled-menus="[]"
                             mode="edit"
                             height="500px"
+                            left-toolbar="undo redo clear | h bold italic strikethrough link | ul ol table hr | image quote code tip | save"
                             @upload-image="handleUploadImage"
                         />
                     </client-only>
@@ -109,7 +110,7 @@ async function handleUploadImage(event: EventTarget, insertImage: AnyFn, files: 
     const formData = new FormData()
     formData.append('file', files[0])
     try {
-        const { data } = await api.file<Upload>(`${uploadApi}/ajax.php?action=upload`, formData)
+        const { data } = await api.file<Upload>(`${uploadApi}/api/fetch/upload`, formData)
         if (data && data.filepath) {
             insertImage({
                 url: `${uploadApi}/${data.filepath}`,
