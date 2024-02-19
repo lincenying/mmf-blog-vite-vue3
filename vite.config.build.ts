@@ -23,6 +23,13 @@ const config: UserConfigExport = {
                 },
             },
         },
+        /**
+         * 预热常用文件
+         * @see https://cn.vitejs.dev/guide/performance#warm-up-frequently-used-files
+         */
+        warmup: {
+            clientFiles: ['./src/main.ts', './src/views/*.vue'],
+        },
     },
     build: {
         target: 'es2018',

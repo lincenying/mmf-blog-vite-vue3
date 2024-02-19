@@ -12,7 +12,6 @@ import VueMacros from 'unplugin-vue-macros'
 
 import { viteMockServe } from '@lincy/vite-plugin-mock'
 import UnoCSS from 'unocss/vite'
-import { warmup } from 'vite-plugin-warmup'
 
 import Components from './vite.config.components'
 import PWA from './vite.config.pwa'
@@ -61,10 +60,6 @@ export default defineConfig(({ mode, command }) => {
             ...Components(),
             UnoCSS({}),
             ...PWA(),
-            warmup({
-                // warm up the files and its imported JS modules recursively
-                clientFiles: ['./src/entry-client.ts', './src/pages/*.vue'],
-            }),
         ],
         resolve: {
             alias: {
