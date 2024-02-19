@@ -1,35 +1,41 @@
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default () => (VitePWA({
+export default () => VitePWA({
     // mode: 'development',
+    scope: '/',
     base: '/',
     registerType: 'autoUpdate',
     workbox: {
-        cacheId: 'mmf-blog-vite-vue3-ssr',
-        globPatterns: ['**/*.{js,css}'],
+        cacheId: 'mmf-blog-vite-vue3',
+        globPatterns: ['**/*.{js,css,txt,png,ico,svg}'],
         navigateFallback: null,
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
             {
-                urlPattern: /api\/.*/i,
+                urlPattern: /^https:\/\/(cdn|fastly)\.jsdelivr\.net\/.*/i,
                 handler: 'CacheFirst',
-                method: 'GET',
                 options: {
-                    // networkTimeoutSeconds: 1,
-                    cacheName: 'api-cache',
+                    cacheName: 'jsdelivr-cache',
                     cacheableResponse: {
                         statuses: [0, 200],
+                    },
+                    expiration: {
+                        maxEntries: 10,
+                        maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
                     },
                 },
             },
             {
-                urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
+                urlPattern: /^https:\/\/cravatar\.cn\/.*/i,
                 handler: 'CacheFirst',
-                method: 'GET',
                 options: {
-                    // networkTimeoutSeconds: 1,
-                    cacheName: 'cdn-cache',
+                    cacheName: 'avatar-cache',
                     cacheableResponse: {
                         statuses: [0, 200],
+                    },
+                    expiration: {
+                        maxEntries: 10,
+                        maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
                     },
                 },
             },
@@ -81,4 +87,4 @@ export default () => (VitePWA({
         display: 'standalone',
         lang: 'zh-CN',
     },
-}))
+})

@@ -1,6 +1,8 @@
 import type { Pinia } from 'pinia'
 import type { RouteComponent, RouteLocationNormalized } from 'vue-router'
 
+export interface RenderType { html: string; preloadLinks: string; headTags: string; store: Pinia }
+
 export type CusRouteComponent = RouteComponent & { asyncData: (payload: AsyncDataConfig) => Promise<any> }
 
 /**
@@ -323,5 +325,5 @@ export interface ShellStore {
     /** * 多个页面切换效果名称 */
     pageTransitionName: string
     /** * 上个页面 scroll 的信息 */
-    historyPageScrollTop: ObjT<number>
+    historyPageScrollTop: Obj<number>
 }
