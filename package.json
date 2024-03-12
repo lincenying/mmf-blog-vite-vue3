@@ -9,7 +9,7 @@
     "node": ">=16.13.0"
   },
   "scripts": {
-    "prepare": "sh simple-git-hooks.sh",
+    "prepare": "npx simple-git-hooks",
     "del": "sh delete-ts.sh",
     "serve": "cross-env DEBUG=vite:transform vite",
     "build": "vite build",
@@ -22,10 +22,10 @@
   "dependencies": {
     "@kangc/v-md-editor": "^2.3.18",
     "@lincy/utils": "^0.5.4",
-    "@unhead/vue": "^1.8.11",
+    "@unhead/vue": "^1.8.13",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.7",
-    "element-plus": "^2.6.0",
+    "element-plus": "^2.6.1",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@lincy/base-config": "^1.1.0",
-    "@lincy/eslint-config": "^4.2.5",
+    "@lincy/eslint-config": "^4.2.6",
     "@lincy/stylelint-config": "^1.17.4",
     "@lincy/vite-plugin-mock": "^3.0.0",
     "@types/js-cookie": "^3.0.6",
@@ -66,7 +66,7 @@
     "unplugin-auto-import": "^0.17.5",
     "unplugin-vue-components": "^0.26.0",
     "unplugin-vue-macros": "^2.7.10",
-    "vite": "5.1.5",
+    "vite": "5.1.6",
     "vite-plugin-mock": "^3.0.1",
     "vite-plugin-pwa": "^0.19.2",
     "vue-tsc": "^2.0.6",
