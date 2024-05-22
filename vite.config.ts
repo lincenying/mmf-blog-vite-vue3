@@ -22,8 +22,9 @@ function charsetRemoval() {
         postcssPlugin: 'internal:charset-removal',
         AtRule: {
             charset: (atRule: any) => {
-                if (atRule.name === 'charset')
+                if (atRule.name === 'charset') {
                     atRule.remove()
+                }
             },
         },
     }
@@ -65,9 +66,6 @@ export default defineConfig(({ mode, command }) => {
             alias: {
                 '@': path.join(__dirname, './src'),
             },
-        },
-        optimizeDeps: {
-            include: ['axios', 'qs'],
         },
         ...Build,
         css: {

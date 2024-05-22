@@ -35,18 +35,18 @@ const BackendUserModify = () => import('./pages/backend-user-modify.vue')
 
 function guardRoute(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const token = cookies.get('user')
-    if (isBrowser && !token)
+    if (isBrowser && !token) {
         next('/')
-    else
-        next()
+    }
+    else { next() }
 }
 
 function guardRouteBackend(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const token = cookies.get('b_user')
-    if (isBrowser && !token)
+    if (isBrowser && !token) {
         next('/backend/login')
-    else
-        next()
+    }
+    else { next() }
 }
 
 const backendConfig = {
@@ -119,12 +119,13 @@ export function createRouter(store: Pinia) {
             // =================== //
             // 根据路由中的 meta.index 来判断切换动画
             let pageTransitionName: string
-            if (!from.meta.index || to.meta.index === from.meta.index)
+            if (!from.meta.index || to.meta.index === from.meta.index) {
                 pageTransitionName = 'fade'
-            else if ((to.meta.index as number) > (from.meta.index as number))
+            }
+            else if ((to.meta.index as number) > (from.meta.index as number)) {
                 pageTransitionName = slideLeft
-            else
-                pageTransitionName = slideRight
+            }
+            else { pageTransitionName = slideRight }
 
             appShellStore.setPageTransitionName(pageTransitionName)
         }
@@ -137,13 +138,15 @@ export function createRouter(store: Pinia) {
             return diffed || (diffed = from.matched[i] !== c) || from.path !== to.path
         })
 
-        if (!activated.length)
+        if (!activated.length) {
             return false
+        }
 
         await Promise.all(
             activated.map((c) => {
-                if ((c.components?.default as any).asyncData)
+                if ((c.components?.default as any).asyncData) {
                     return (c.components?.default as any).asyncData({ store, route: to })
+                }
 
                 return true
             }),
