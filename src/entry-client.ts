@@ -28,5 +28,6 @@ router.isReady().then(() => {
     console.log('client router ready')
 })
 
-if (window.__INITIAL_STATE__)
+if (window.__INITIAL_STATE__) {
     store.state.value = window.__INITIAL_STATE__
+}
