@@ -52,10 +52,10 @@ $ yarn serve
 ```
 
 首页
-http://localhost:7777
+http://localhost:7779
 
 登录
-http://localhost:7777/backend-login
+http://localhost:7779/backend-login
 
 # LICENSE
 

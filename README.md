@@ -59,10 +59,10 @@ $ pnpm lint
 ```
 
 Home Site
-http://localhost:7777
+http://localhost:7779
 
 Login
-http://localhost:7777/backend/login
+http://localhost:7779/backend/login
 
 # LICENSE
 

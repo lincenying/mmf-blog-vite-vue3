@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const config: UserConfigExport = {
     server: {
-        port: 7777,
+        port: 7779,
         host: '0.0.0.0',
         proxy: {
             '/api': {
