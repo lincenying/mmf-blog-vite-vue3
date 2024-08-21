@@ -1,7 +1,11 @@
 services:
   frontend:
+    container_name: images-mmf-blog-vite-vue3
+    image: lincenying/images-mmf-blog-vite-vue3:${TAG}
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.api
     ports:
       - "80:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

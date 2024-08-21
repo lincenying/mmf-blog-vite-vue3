@@ -81,9 +81,9 @@ volumes:
 docker-compose build
 docker-compose up -d
 
-# 后端服务器在宿主机或者其他容器上
-docker-compose build -f docker-compose.api.yml
-docker-compose up -d -f docker-compose.api.yml
+# 如果后端服务器在宿主机或者其他容器上, 按照如下命令启动, 并且修改`nginx/conf.d/vue3-api.conf`里的`proxy_pass`配置
+docker-compose -f docker-compose.api.yml build
+docker-compose -f docker-compose.api.yml up -d
 ```
 
 Home Site
