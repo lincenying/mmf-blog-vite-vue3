@@ -1,0 +1,26 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+  mongo:
+    image: mongo:3.6
+    restart: always
+    volumes:
+      - /Users/lincenying/web/mongodb/data:/data/db
+    ports:
+      - 27017:27017
+
+  api:
+    image: lincenying/api-server:1.0.1
+    environment:
+      DATABASE_URL: mongodb://mongo:27017
+    ports:
+      - 4008:4000
+    depends_on:
+      - mongo

@@ -21,9 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import { parseCookies } from '@lincy/utils'
-import type { UserCookies } from './types'
-
 defineOptions({
     name: 'AppRoot',
 })
@@ -31,10 +28,6 @@ defineOptions({
 // pinia 状态管理 ===>
 const globalStore = useGlobalStore()
 const { showLoginModal, showRegisterModal } = toRefs(globalStore)
-
-const cookies = parseCookies(document.cookie) as UserCookies
-cookies.username = decodeURIComponent(cookies.username || '')
-globalStore.setCookies(cookies)
 
 const appShellStore = useAppShellStore()
 const { pageTransitionName } = storeToRefs(appShellStore)
