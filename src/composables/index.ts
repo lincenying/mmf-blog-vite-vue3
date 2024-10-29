@@ -1,5 +1,6 @@
-import md5 from 'md5'
 import type { AnyFn } from '@vueuse/core'
+
+import md5 from 'md5'
 
 export function useGlobal() {
     const ins = getCurrentInstance()!
@@ -86,7 +87,7 @@ export function useSaveScroll() {
         }, 300)
     })
 
-    onBeforeRouteLeave((to, from, next) => {
+    onBeforeRouteLeave((_to, from, next) => {
         appShellStore.saveScrollTop({
             path: from.fullPath,
             scrollTop: Math.max(window.scrollY, document.documentElement.scrollTop, document.body.scrollTop),

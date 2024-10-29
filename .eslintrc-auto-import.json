@@ -322,6 +322,16 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "DirectiveBinding": true,
+    "MaybeRef": true,
+    "MaybeRefOrGetter": true,
+    "capi": true,
+    "onWatcherCleanup": true,
+    "sapi": true,
+    "uploadApi": true,
+    "useId": true,
+    "useModel": true,
+    "useTemplateRef": true
   }
 }

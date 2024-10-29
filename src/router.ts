@@ -3,11 +3,12 @@
  * @author lincenying(lincenying@qq.com)
  */
 
-import cookies from 'js-cookie'
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import { createRouter as _createRouter, createMemoryHistory, createWebHistory } from 'vue-router'
 import type { Pinia } from 'pinia'
+import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+
 import { isBrowser } from '@lincy/utils'
+import cookies from 'js-cookie'
+import { createRouter as _createRouter, createMemoryHistory, createWebHistory } from 'vue-router'
 
 // 定义切割点，异步加载路由组件
 const NotFound = () => import('./pages/404.vue')
@@ -33,7 +34,7 @@ const BackendAdminModify = () => import('./pages/backend-admin-modify.vue')
 const BackendUserList = () => import('./pages/backend-user-list.vue')
 const BackendUserModify = () => import('./pages/backend-user-modify.vue')
 
-function guardRoute(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+function guardRoute(_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) {
     const token = cookies.get('user')
     if (isBrowser && !token) {
         next('/')
@@ -43,7 +44,7 @@ function guardRoute(to: RouteLocationNormalized, from: RouteLocationNormalized, 
     }
 }
 
-function guardRouteBackend(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+function guardRouteBackend(_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) {
     const token = cookies.get('b_user')
     if (isBrowser && !token) {
         next('/backend/login')

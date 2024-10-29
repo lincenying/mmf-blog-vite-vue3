@@ -1,8 +1,8 @@
 import { LoadingPlugin } from 'vue-loading-overlay'
 
+import reloadPrompt from '@/components/reload-prompt.vue'
 import { createApp } from './main'
 import VueMarkdownEditor from './plugin/v-md-editor'
-import reloadPrompt from '@/components/reload-prompt.vue'
 
 import 'uno.css'
 import './assets/css/github-markdown.css'
@@ -19,9 +19,9 @@ const { app, router, store } = createApp()
 router.isReady().then(() => {
     app.component('ReloadPrompt', reloadPrompt)
     app.use(LoadingPlugin, {
-        'can-cancel': false,
-        'loader': 'dots',
-        'color': '#54d9e0',
+        canCancel: false,
+        loader: 'dots',
+        color: '#54d9e0',
     })
         .use(VueMarkdownEditor)
         .mount('#app')
