@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     extra_hosts:
-        - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - api
 
