@@ -14,9 +14,6 @@ importers:
       '@lincy/utils':
         specifier: ^0.6.1
         version: 0.6.1
-      '@lincy/vite-plugin-mock':
-        specifier: ^3.0.0
-        version: 3.0.0(esbuild@0.23.1)(mockjs@1.1.0)(vite@5.4.10(@types/node@22.10.1)(sass@1.82.0)(terser@5.36.0))
       '@unhead/vue':
         specifier: ^1.11.13
         version: 1.11.13(vue@3.5.12(typescript@5.7.2))
@@ -1212,13 +1209,6 @@ packages:
   '@lincy/utils@0.6.1':
     resolution: {integrity: sha512-WHd6wqNgooZWWLAa36FGPxNcyDX7gQbneHsb4RKU3SXs+nMCMtN6u+kAPKfULYW+FXcMQPiNjdPLiBsvYy9sQQ==}
 
-  '@lincy/vite-plugin-mock@3.0.0':
-    resolution: {integrity: sha512-Pq051ibIaqgdu8bo7X555MkpSZ1zPbapPmkSnYjz9r96EIdGxiTd5V8upvGnyIh4hVtfgVSfCe69kDwRyqz8jQ==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      mockjs: '>=1.1.0'
-      vite: '>=4.0.0'
-
   '@mrmlnc/readdir-enhanced@2.2.1':
     resolution: {integrity: sha512-bPHp6Ji8b41szTOcaP63VlnbbO5Ny6dwAATtY6JTjh5N2OLrb5Qk/Th5cRkRQhkWCt+EJsYrNB0MiL+Gpn6e3g==}
     engines: {node: '>=4'}
@@ -1623,9 +1613,6 @@ packages:
 
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
-
-  '@types/mockjs@1.0.10':
-    resolution: {integrity: sha512-SXgrhajHG7boLv6oU93CcmdDm0HYRiceuz6b+7z+/2lCJPTWDv0V5YiwFHT2ejE4bQqgSXQiVPQYPWv7LGsK1g==}
 
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
@@ -7309,22 +7296,6 @@ snapshots:
 
   '@lincy/utils@0.6.1': {}
 
-  '@lincy/vite-plugin-mock@3.0.0(esbuild@0.23.1)(mockjs@1.1.0)(vite@5.4.10(@types/node@22.10.1)(sass@1.82.0)(terser@5.36.0))':
-    dependencies:
-      '@types/mockjs': 1.0.10
-      bundle-require: 4.2.1(esbuild@0.23.1)
-      chokidar: 3.6.0
-      connect: 3.7.0
-      debug: 4.3.7
-      fast-glob: 3.3.2
-      mockjs: 1.1.0
-      path-to-regexp: 6.3.0
-      picocolors: 1.1.1
-      vite: 5.4.10(@types/node@22.10.1)(sass@1.82.0)(terser@5.36.0)
-    transitivePeerDependencies:
-      - esbuild
-      - supports-color
-
   '@mrmlnc/readdir-enhanced@2.2.1':
     dependencies:
       call-me-maybe: 1.0.2
@@ -7644,8 +7615,6 @@ snapshots:
   '@types/minimatch@5.1.2': {}
 
   '@types/minimist@1.2.5': {}
-
-  '@types/mockjs@1.0.10': {}
 
   '@types/ms@0.7.34': {}
 
