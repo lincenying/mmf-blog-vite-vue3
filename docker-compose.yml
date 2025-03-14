@@ -21,7 +21,7 @@ services:
       - 27017:27017
 
   api:
-    image: lincenying/api-server:1.0.1
+    image: lincenying/api-server:1.25.0312
     environment:
       DATABASE_URL: mongodb://mongo:27017
     ports:
