@@ -1,3 +1,4 @@
+import { createHead } from '@unhead/vue/client'
 import { LoadingPlugin } from 'vue-loading-overlay'
 
 import reloadPrompt from '@/components/reload-prompt.vue'
@@ -15,9 +16,11 @@ import 'element-plus/es/components/message-box/style/css'
 import './assets/scss/style.scss'
 
 const { app, router, store } = createApp()
+const head = createHead()
 
 router.isReady().then(() => {
     app.component('ReloadPrompt', reloadPrompt)
+    app.use(head)
     app.use(LoadingPlugin, {
         canCancel: false,
         loader: 'dots',
