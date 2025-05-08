@@ -1,5 +1,5 @@
 # 使用官方的 Node.js 镜像作为基础镜像
-FROM node:18-alpine AS build-stage
+FROM node:22-alpine AS build-stage
 
 WORKDIR /app
 

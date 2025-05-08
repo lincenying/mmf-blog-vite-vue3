@@ -65,7 +65,7 @@ $ pnpm lint
 ```yaml
 api:
   container_name: api-server
-  image: lincenying/api-server:1.25.0312
+  image: lincenying/api-server:1.25.0414
 ```
 
 修改`docker-compose.yml`中的`mongo.volumes`配置, 将宿主机数据库路径映射到容器中
