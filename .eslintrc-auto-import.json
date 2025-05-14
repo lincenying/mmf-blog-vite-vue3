@@ -337,6 +337,8 @@
     "onElementRemoval": true,
     "useCountdown": true,
     "usePreferredReducedTransparency": true,
-    "useSSRWidth": true
+    "useSSRWidth": true,
+    "Slot": true,
+    "Slots": true
   }
 }
