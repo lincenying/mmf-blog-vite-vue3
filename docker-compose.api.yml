@@ -1,6 +1,6 @@
 services:
   frontend:
-    container_name: images-mmf-blog-vite-vue3
+    container_name: vue3-app-server
     image: lincenying/images-mmf-blog-vite-vue3:${TAG}
     build:
       context: .
@@ -9,3 +9,9 @@ services:
       - '80:80'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
