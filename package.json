@@ -3,7 +3,7 @@
   "type": "module",
   "version": "2.0.1",
   "private": true,
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.12.4",
   "author": "lincenying <lincenying@qq.com>",
   "engines": {
     "node": ">=16.13.0"
@@ -21,11 +21,11 @@
   },
   "dependencies": {
     "@kangc/v-md-editor": "^2.3.18",
-    "@lincy/utils": "^0.6.2",
-    "@unhead/vue": "^2.0.10",
-    "@vueuse/core": "^13.3.0",
+    "@lincy/utils": "^0.6.3",
+    "@unhead/vue": "^2.0.12",
+    "@vueuse/core": "^13.5.0",
     "axios": "^1.10.0",
-    "element-plus": "^2.10.2",
+    "element-plus": "^2.10.3",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
@@ -34,44 +34,44 @@
     "prismjs": "^1.30.0",
     "qs": "^6.14.0",
     "store2": "^2.14.4",
-    "vue": "^3.5.16",
+    "vue": "^3.5.17",
     "vue-content-loader": "^2.0.1",
     "vue-loading-overlay": "^6.0.6",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@lincy/eslint-config": "^5.6.1",
-    "@lincy/stylelint-config": "^2.1.0",
-    "@lincy/unocss-base-config": "^2.2.1",
+    "@lincy/eslint-config": "^5.7.0",
+    "@lincy/stylelint-config": "^2.2.0",
+    "@lincy/unocss-base-config": "^2.3.0",
     "@types/js-cookie": "^3.0.6",
-    "@types/lodash": "^4.17.17",
+    "@types/lodash": "^4.17.20",
     "@types/md5": "^2.3.5",
     "@types/polyfill-library": "^3.108.4",
     "@types/prismjs": "^1.26.5",
     "@types/qs": "^6.14.0",
-    "@unocss/eslint-plugin": "^66.2.1",
-    "@unocss/preset-mini": "^66.2.1",
-    "@vitejs/plugin-vue": "^5.2.4",
-    "@vitejs/plugin-vue-jsx": "^4.2.0",
+    "@unocss/eslint-plugin": "^66.3.3",
+    "@unocss/preset-mini": "^66.3.3",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitejs/plugin-vue-jsx": "^5.0.1",
     "cross-env": "^7.0.3",
-    "eslint": "^9.29.0",
+    "eslint": "^9.30.1",
     "eslint-plugin-format": "^1.0.1",
     "lint-staged": "^16.1.2",
     "polyfill-library": "^4.8.0",
     "postcss": "^8.5.6",
     "sass": "^1.89.2",
     "simple-git-hooks": "^2.13.0",
-    "stylelint": "^16.20.0",
+    "stylelint": "^16.21.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "unocss": "^66.2.1",
+    "unocss": "^66.3.3",
     "unplugin-auto-import": "^19.3.0",
-    "unplugin-vue-components": "^28.7.0",
+    "unplugin-vue-components": "^28.8.0",
     "unplugin-vue-macros": "^2.14.5",
-    "vite": "^6.3.5",
+    "vite": "^7.0.2",
     "vite-plugin-mock": "^3.0.2",
-    "vite-plugin-pwa": "^1.0.0",
-    "vue-tsc": "^2.2.10",
+    "vite-plugin-pwa": "^1.0.1",
+    "vue-tsc": "^3.0.1",
     "workbox-cli": "^7.3.0"
   },
   "pnpm": {
@@ -82,7 +82,10 @@
         "postcss",
         "prettier"
       ]
-    }
+    },
+    "onlyBuiltDependencies": [
+      "vue-demi"
+    ]
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
