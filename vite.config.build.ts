@@ -11,6 +11,7 @@ const config: { server: ServerOptions, build: BuildOptions } = {
     server: {
         port: 7779,
         host: '0.0.0.0',
+        open: true,
         proxy: {
             '/api': {
                 target: apiDomain,
