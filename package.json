@@ -74,19 +74,6 @@
     "vue-tsc": "^3.1.5",
     "workbox-cli": "^7.4.0"
   },
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "rollup",
-        "esbuild",
-        "postcss",
-        "prettier"
-      ]
-    },
-    "onlyBuiltDependencies": [
-      "vue-demi"
-    ]
-  },
   "simple-git-hooks[-del]": {
     "pre-commit": "npx lint-staged"
   },
