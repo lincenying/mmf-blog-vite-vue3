@@ -56,6 +56,8 @@ watch(item, (val) => {
         form.username = val.data.username
         form.email = val.data.email
     }
+}, {
+    immediate: true,
 })
 
 async function handleModify() {
@@ -67,10 +69,10 @@ async function handleModify() {
         return
     }
     toggleLoading(true)
-    const { code, data, message } = await capi.post<User>('backend/admin/modify', form)
+    const { code, data } = await capi.post<User>('backend/admin/modify', form)
     toggleLoading(false)
     if (code === 200) {
-        showMsg({ type: 'success', content: message })
+        showMsg({ type: 'success', content: '修改成功' })
         backendAdminStore.updateAdminItem(data)
         router.push('/backend/admin/list')
     }

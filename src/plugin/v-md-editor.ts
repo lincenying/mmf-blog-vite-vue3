@@ -1,5 +1,5 @@
 import VueMarkdownEditor from '@kangc/v-md-editor'
-import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index'
+import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number'
 import vuePressTheme from '@kangc/v-md-editor/lib/theme/vuepress'
 
 // Prism
@@ -23,7 +23,15 @@ VueMarkdownEditor
         codeHighlightExtensionMap: {
             vue: 'html',
         },
+        extend(md: any) {
+            md.set({
+                breaks: true, // 启用换行符转换
+                html: true, // 允许 HTML 标签
+                linkify: true, // 自动转换 URL 为链接
+                typographer: true, // 启用更美观的排版
+            })
+        },
     })
-    .use(createLineNumbertPlugin())
+    .use((createLineNumbertPlugin.default || createLineNumbertPlugin)())
 
 export default VueMarkdownEditor

@@ -41,7 +41,7 @@ packages:
 catalogs:
   dev:
     '@lincy/unocss-base-config': ^2.6.2
-    '@unocss/preset-mini': ^66.6.6
+    '@unocss/preset-mini': ^66.6.7
     '@vitejs/plugin-vue': ^6.0.5
     '@vitejs/plugin-vue-jsx': ^5.1.5
     cross-env: ^10.1.0
@@ -52,23 +52,23 @@ catalogs:
     simple-git-hooks: ^2.13.1
     tsx: ^4.21.0
     typescript: ^5.9.3
-    unocss: ^66.6.6
+    unocss: ^66.6.7
     unplugin-auto-import: ^21.0.0
-    unplugin-vue-components: ^31.0.0
+    unplugin-vue-components: ^32.0.0
     unplugin-vue-macros: ^2.14.5
     vite: ^7.3.1
     vite-plugin-mock: ^3.0.2
     vite-plugin-pwa: ^1.2.0
-    vue-tsc: ^3.2.5
+    vue-tsc: ^3.2.6
     workbox-cli: ^7.4.0
 
   lint:
     '@lincy/eslint-config': ^6.5.2
     '@lincy/stylelint-config': ^2.2.2
-    '@unocss/eslint-plugin': ^66.6.6
-    eslint: ^10.0.3
+    '@unocss/eslint-plugin': ^66.6.7
+    eslint: ^10.1.0
     eslint-plugin-format: ^2.0.1
-    stylelint: ^17.4.0
+    stylelint: ^17.5.0
 
   prod:
     '@kangc/v-md-editor': ^2.3.18
@@ -76,7 +76,7 @@ catalogs:
     '@unhead/vue': ^2.1.12
     '@vueuse/core': ^14.2.1
     axios: ^1.13.6
-    element-plus: ^2.13.5
+    element-plus: ^2.13.6
     js-cookie: ^3.0.5
     lodash: ^4.17.23
     md5: ^2.3.0
@@ -85,10 +85,10 @@ catalogs:
     prismjs: ^1.30.0
     qs: ^6.15.0
     store2: ^2.14.4
-    vue: ^3.5.30
+    vue: ^3.5.31
     vue-content-loader: ^2.0.1
     vue-loading-overlay: ^6.0.6
-    vue-router: ^5.0.3
+    vue-router: ^5.0.4
 
   types:
     '@types/js-cookie': ^3.0.6

@@ -21,11 +21,11 @@ const head = createHead()
 router.isReady().then(() => {
     app.component('ReloadPrompt', reloadPrompt)
     app.use(head)
-    app.use(LoadingPlugin, {
-        canCancel: false,
-        loader: 'dots',
-        color: '#54d9e0',
-    })
+        .use(LoadingPlugin, {
+            canCancel: false,
+            loader: 'dots',
+            color: '#54d9e0',
+        })
         .use(VueMarkdownEditor)
         .mount('#app')
     console.log('client router ready')

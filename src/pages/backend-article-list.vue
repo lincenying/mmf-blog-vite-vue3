@@ -1,5 +1,8 @@
 <template>
     <div class="settings-main card">
+        <div class="settings-main-content" flex="~ justify-end" border-b="1px solid hex-f4f4f4">
+            <input v-model="searchKey" placeholder="请输入标题, 记得按回车哦" name="search" class="base-input my-10px w-500px" @keyup.enter="onSearch">
+        </div>
         <div class="settings-main-content">
             <div class="list-section list-header">
                 <div class="list-title">标题</div>
@@ -55,27 +58,34 @@ useSaveScroll()
 
 const [loading, toggleLoading] = useToggle(false)
 
-async function loadMore(page = lists.page) {
+const searchKey = ref('')
+
+async function loadMore(page = lists.page, key: string = searchKey.value) {
     if (loading.value) {
         return
     }
+    console.log(key)
     toggleLoading(true)
-    await backendArticleStore.getArticleList({ page, path: route.fullPath })
+    await backendArticleStore.getArticleList({ page, key, path: route.fullPath })
     toggleLoading(false)
 }
 async function handleRecover(id: string) {
-    const { code, message } = await capi.get<Nullable<Article>>('backend/article/recover', { id })
+    const { code } = await capi.get<Nullable<Article>>('backend/article/recover', { id })
     if (code === 200) {
-        showMsg({ type: 'success', content: message })
+        showMsg({ type: 'success', content: '恢复成功' })
         backendArticleStore.recoverArticle(id)
     }
 }
 async function handleDelete(id: string) {
-    const { code, message } = await capi.get<Nullable<Article>>('backend/article/delete', { id })
+    const { code } = await capi.get<Nullable<Article>>('backend/article/delete', { id })
     if (code === 200) {
-        showMsg({ type: 'success', content: message })
+        showMsg({ type: 'success', content: '删除成功' })
         backendArticleStore.deleteArticle(id)
     }
+}
+
+function onSearch() {
+    loadMore(1)
 }
 
 onMounted(() => {

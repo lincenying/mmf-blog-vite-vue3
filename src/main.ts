@@ -2,6 +2,7 @@ import { createPinia } from 'pinia'
 import { createApp as createSSRApp } from 'vue'
 
 import globalPlugin from '@/plugin/global'
+
 import App from './app.vue'
 import { createRouter } from './router'
 
@@ -13,7 +14,9 @@ export function createApp() {
     const app = createSSRApp(App)
     const store = createPinia()
     const router = createRouter(store)
-    app.use(store).use(router).use(globalPlugin)
+    app.use(store)
+        .use(router)
+        .use(globalPlugin)
 
     return { app, router, store }
 }

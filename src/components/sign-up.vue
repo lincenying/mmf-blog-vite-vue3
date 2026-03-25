@@ -7,7 +7,7 @@
             <div class="modal-content">
                 <form class="sign-up-form">
                     <div class="input-wrap">
-                        <input v-model="form.username" type="text" placeholder="昵称" class="base-input" name="username">
+                        <input v-model="form.username" type="text" placeholder="昵称" class="base-input" name="username" maxlength="20">
                         <p class="error-info input-info hidden">长度至少 6 位</p>
                     </div>
                     <div class="input-wrap">
@@ -15,11 +15,11 @@
                         <p class="error-info input-info hidden">长度至少 6 位</p>
                     </div>
                     <div class="input-wrap">
-                        <input v-model="form.password" type="password" placeholder="密码" class="base-input" autocomplete="off" name="password">
+                        <input v-model="form.password" type="password" placeholder="密码" class="base-input" autocomplete="off" name="password" maxlength="20">
                         <p class="error-info input-info hidden">长度至少 6 位</p>
                     </div>
                     <div class="input-wrap">
-                        <input v-model="form.re_password" type="password" placeholder="重复密码" class="base-input" autocomplete="off" name="re_password">
+                        <input v-model="form.re_password" type="password" placeholder="重复密码" class="base-input" autocomplete="off" name="re_password" maxlength="20">
                         <p class="error-info input-info hidden">长度至少 6 位</p>
                     </div>
                     <a href="javascript:;" class="btn sign-up-btn btn-yellow" @click="handleRegister">确认注册</a>
@@ -77,9 +77,9 @@ const handleRegister = useLockFn(async () => {
         return showMsg('两次输入的密码不一致!')
     }
 
-    const { code, message } = await capi.post<'success' | 'error'>('frontend/user/insert', form)
+    const { code } = await capi.post<'success' | 'error'>('frontend/user/insert', form)
     if (code === 200) {
-        showMsg({ type: 'success', content: message })
+        showMsg({ type: 'success', content: '注册成功，请登录！' })
         handleLogin()
     }
 })
