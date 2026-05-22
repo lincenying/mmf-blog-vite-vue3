@@ -30,3 +30,4 @@ server/config/mpapp.js
 server/config/shihua.js
 svg-backup/
 docs/
+.cursor/rules/global*.mdc

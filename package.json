@@ -3,13 +3,12 @@
   "type": "module",
   "version": "1.25.1029",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.2.2",
   "author": "lincenying <lincenying@qq.com>",
   "engines": {
-    "node": ">=16.13.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
-    "prepare[-del]": "npx simple-git-hooks",
     "del": "sh delete-ts.sh",
     "serve": "cross-env DEBUG=vite:transform vite",
     "build": "tsx polyfill.ts && vite build",
@@ -56,11 +55,9 @@
     "cross-env": "catalog:dev",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
-    "lint-staged": "catalog:dev",
     "polyfill-library": "catalog:dev",
     "postcss": "catalog:dev",
     "sass-embedded": "catalog:dev",
-    "simple-git-hooks": "catalog:dev",
     "stylelint": "catalog:lint",
     "tsx": "catalog:dev",
     "typescript": "catalog:dev",
@@ -73,13 +70,5 @@
     "vite-plugin-pwa": "catalog:dev",
     "vue-tsc": "catalog:dev",
     "workbox-cli": "catalog:dev"
-  },
-  "simple-git-hooks[-del]": {
-    "pre-commit": "npx lint-staged"
-  },
-  "lint-staged[-del]": {
-    "*.{js,ts,tsx,vue}": [
-      "eslint --fix"
-    ]
   }
 }
